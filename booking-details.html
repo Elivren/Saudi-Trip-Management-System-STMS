@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details - STMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar scrolled">
+    <div class="container">
+        <a href="index.html" class="nav-logo" style="color:var(--primary);">
+            <div class="logo-icon"><i class="fas fa-kaaba"></i></div>
+            STMS
+        </a>
+        <div class="nav-right">
+            <button class="lang-switch" onclick="toggleLang()">العربية</button>
+            <a href="javascript:history.back()" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<div class="trip-hero" style="margin-top:70px;background:linear-gradient(135deg,#1a3c2e 0%,#0d6c35 100%);">
+    <div class="trip-hero-overlay">
+        <div class="trip-hero-text">
+            <div style="margin-bottom:10px;">
+                <span style="background:#1565c0;color:white;padding:4px 14px;border-radius:20px;font-size:0.85rem;font-weight:600;">
+                    <i class="fas fa-map-marked-alt"></i> Self-Planned Trip
+                </span>
+            </div>
+            <h1>Self-Planned Trip #<span id="bookingIdTitle">--</span></h1>
+            <div class="trip-hero-meta" id="bookingHeroMeta"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="container" style="padding-top:30px;padding-bottom:40px;">
+    <div class="trip-detail-grid">
+        <!-- Left Column -->
+        <div>
+            <!-- Tourist Info -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fas fa-user" style="color:var(--primary);margin-right:8px;"></i> Tourist Information</h3>
+                </div>
+                <div class="card-body">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" id="touristInfoGrid"></div>
+                </div>
+            </div>
+
+            <!-- Cities -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fas fa-map-marked-alt" style="color:var(--gold-dark);margin-right:8px;"></i> Cities & Duration</h3>
+                </div>
+                <div class="card-body" id="bookingCitiesContainer">
+                    <p style="color:var(--text-light);">Loading cities...</p>
+                </div>
+            </div>
+
+            <!-- Add-ons -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fas fa-concierge-bell" style="color:var(--info);margin-right:8px;"></i> Add-ons</h3>
+                </div>
+                <div class="card-body" id="bookingAddonsContainer"></div>
+            </div>
+
+            <!-- Notes -->
+            <div class="card mb-3" id="bookingNotesCard" style="display:none;">
+                <div class="card-header">
+                    <h3><i class="fas fa-sticky-note" style="color:var(--gold);margin-right:8px;"></i> Special Notes</h3>
+                </div>
+                <div class="card-body">
+                    <p id="bookingNotes" style="color:var(--text);line-height:1.8;"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div>
+            <div class="booking-widget">
+                <!-- Status -->
+                <div style="text-align:center;margin-bottom:20px;">
+                    <span class="status-badge" id="bookingStatus" style="font-size:1rem;padding:8px 20px;">--</span>
+                </div>
+
+                <div class="booking-price" id="bookingTotal">--</div>
+                <p style="color:var(--text-light);font-size:0.85rem;margin-bottom:20px;text-align:center;">Total Price (SAR)</p>
+
+                <div style="background:var(--gray-50);border-radius:10px;padding:16px;margin-bottom:16px;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                        <span style="color:var(--text-light);">Start Date</span>
+                        <strong id="bookingDate" style="color:var(--dark);">--</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                        <span style="color:var(--text-light);">People</span>
+                        <strong id="bookingPeople" style="color:var(--dark);">--</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;">
+                        <span style="color:var(--text-light);">Duration</span>
+                        <strong id="bookingDuration" style="color:var(--dark);">--</strong>
+                    </div>
+                </div>
+
+                <!-- Guide -->
+                <div style="background:var(--gray-50);border-radius:10px;padding:16px;" id="guideBox">
+                    <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;margin-bottom:8px;">Assigned Guide</div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="width:40px;height:40px;border-radius:50%;background:rgba(0,108,53,0.1);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;" id="guideAvatar">?</div>
+                        <div>
+                            <strong id="guideName" style="color:var(--dark);">Not assigned yet</strong>
+                            <p id="guideEmail" style="color:var(--text-light);font-size:0.8rem;margin:0;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom" style="border:none;padding:0;">
+            <span>&copy; 2026 STMS. All rights reserved.</span>
+        </div>
+    </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingId = urlParams.get('id');
+
+    if (!bookingId) {
+        document.getElementById('bookingIdTitle').textContent = 'Not found';
+    } else {
+        loadBookingDetails();
+    }
+
+    function loadBookingDetails() {
+        fetch(`php/bookings.php?action=get_booking&id=${bookingId}`, { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.booking) {
+                    renderBooking(data.booking);
+                } else {
+                    document.getElementById('bookingIdTitle').textContent = 'Not found';
+                }
+            })
+            .catch(() => {
+                document.getElementById('bookingIdTitle').textContent = 'Error';
+            });
+    }
+
+    function renderBooking(b) {
+        document.title = 'Booking #' + b.id + ' - STMS';
+        document.getElementById('bookingIdTitle').textContent = b.id;
+
+        const cities = (b.cities || []).map(c => c.city_name).join(', ') || '-';
+        document.getElementById('bookingHeroMeta').innerHTML = `
+            <span><i class="fas fa-map-marker-alt"></i> ${cities}</span>
+            <span><i class="fas fa-calendar"></i> ${formatDate(b.start_date || b.created_at)}</span>
+            <span><i class="fas fa-users"></i> ${b.num_people} person(s)</span>
+        `;
+
+        // Status
+        const statusEl = document.getElementById('bookingStatus');
+        const statusMap = { accepted: 'مقبول / Accepted', pending: 'معلق / Pending', rejected: 'مرفوض / Rejected', cancelled: 'ملغي / Cancelled' };
+        statusEl.textContent = statusMap[b.status] || b.status;
+        statusEl.className = 'status-badge ' + b.status;
+
+        // Tourist info
+        document.getElementById('touristInfoGrid').innerHTML = `
+            <div><div style="font-size:0.75rem;color:var(--text-light);margin-bottom:4px;">Name</div><strong>${b.tourist_name || '-'}</strong></div>
+            <div><div style="font-size:0.75rem;color:var(--text-light);margin-bottom:4px;">Email</div><strong style="font-size:0.9rem;">${b.tourist_email || '-'}</strong></div>
+            <div><div style="font-size:0.75rem;color:var(--text-light);margin-bottom:4px;">Phone</div><strong>${b.tourist_phone || '-'}</strong></div>
+            <div><div style="font-size:0.75rem;color:var(--text-light);margin-bottom:4px;">Booking ID</div><strong>#${b.id}</strong></div>
+        `;
+
+        // Cities
+        if (b.cities && b.cities.length) {
+            document.getElementById('bookingCitiesContainer').innerHTML = b.cities.map(c => `
+                <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100);">
+                    <div style="background:var(--primary);color:white;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">
+                        <i class="fas fa-map-pin" style="font-size:0.8rem;"></i>
+                    </div>
+                    <div>
+                        <strong style="color:var(--dark);">${c.city_name}</strong>
+                        <span style="color:var(--text-light);font-size:0.85rem;margin-right:8px;"> — ${c.days_in_city} day${c.days_in_city > 1 ? 's' : ''}</span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            document.getElementById('bookingCitiesContainer').innerHTML = '<p style="color:var(--text-light);">No cities data</p>';
+        }
+
+        // Add-ons
+        const addons = [];
+        if (parseInt(b.include_accommodation)) addons.push({ icon: 'fa-bed', label: 'Accommodation / إقامة' });
+        if (parseInt(b.include_breakfast)) addons.push({ icon: 'fa-coffee', label: 'Breakfast / فطور' });
+        if (parseInt(b.include_lunch)) addons.push({ icon: 'fa-utensils', label: 'Lunch / غداء' });
+        if (parseInt(b.include_dinner)) addons.push({ icon: 'fa-moon', label: 'Dinner / عشاء' });
+
+        document.getElementById('bookingAddonsContainer').innerHTML = addons.length
+            ? addons.map(a => `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;">
+                <i class="fas ${a.icon}" style="color:var(--primary);width:20px;"></i>
+                <span>${a.label}</span>
+              </div>`).join('')
+            : '<p style="color:var(--text-light);">No add-ons selected</p>';
+
+        // Notes
+        if (b.notes) {
+            document.getElementById('bookingNotesCard').style.display = 'block';
+            document.getElementById('bookingNotes').textContent = b.notes;
+        }
+
+        // Right column
+        document.getElementById('bookingTotal').innerHTML = `${Number(b.total_price || 0).toFixed(0)} <span>SAR</span>`;
+        document.getElementById('bookingDate').textContent = formatDate(b.start_date || b.created_at);
+        document.getElementById('bookingPeople').textContent = b.num_people + ' person(s)';
+        document.getElementById('bookingDuration').textContent = b.duration_days ? b.duration_days + ' days' : '-';
+
+        // Guide
+        if (b.guide_name) {
+            document.getElementById('guideName').textContent = b.guide_name;
+            document.getElementById('guideAvatar').textContent = b.guide_name.charAt(0);
+            document.getElementById('guideEmail').textContent = b.guide_email || '';
+        }
+    }
+</script>
+</body>
+</html>

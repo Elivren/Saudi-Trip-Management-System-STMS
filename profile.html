@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - STMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="index.html" class="sidebar-logo">
+            <div class="logo-icon"><i class="fas fa-kaaba"></i></div>
+            STMS
+        </a>
+        <button class="lang-switch" onclick="toggleLang()" style="margin:0 16px 10px;">العربية</button>
+        <div class="sidebar-menu">
+            <div class="sidebar-label" data-i18n="pf_navigation">Navigation</div>
+            <a href="#" class="sidebar-link" id="dashLink">
+                <i class="fas fa-tachometer-alt"></i> <span data-i18n="pf_dashboard">Dashboard</span>
+            </a>
+            <a href="profile.html" class="sidebar-link active">
+                <i class="fas fa-user-circle"></i> <span data-i18n="pf_profile">Profile</span>
+            </a>
+            <div class="sidebar-label" data-i18n="pf_quick_links">Quick Links</div>
+            <a href="index.html" class="sidebar-link">
+                <i class="fas fa-home"></i> <span data-i18n="pf_home">Home</span>
+            </a>
+            <a href="trips.html" class="sidebar-link">
+                <i class="fas fa-compass"></i> <span data-i18n="pf_browse">Browse Trips</span>
+            </a>
+            <a href="#" class="sidebar-link" onclick="handleLogout()">
+                <i class="fas fa-sign-out-alt"></i> <span data-i18n="pf_logout">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <button class="mobile-toggle" onclick="toggleSidebar()" style="display:none; margin-bottom:10px;">
+                    <i class="fas fa-bars" style="color:var(--dark);"></i>
+                </button>
+                <h1 data-i18n="pf_title">My Profile</h1>
+                <p data-i18n="pf_subtitle">Manage your account information</p>
+            </div>
+        </div>
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">U</div>
+            <div class="profile-info">
+                <h2 id="profileName">Loading...</h2>
+                <p id="profileRole">User</p>
+                <p id="profileEmail" style="opacity:0.7; font-size:0.9rem;"></p>
+            </div>
+        </div>
+
+        <!-- Profile Tabs -->
+        <div class="profile-tabs">
+            <button class="profile-tab active" onclick="switchTab('info', this)">
+                <i class="fas fa-user"></i> <span data-i18n="pf_info">Personal Info</span>
+            </button>
+            <button class="profile-tab" onclick="switchTab('password', this)">
+                <i class="fas fa-lock"></i> <span data-i18n="pf_change_pw">Change Password</span>
+            </button>
+            <button class="profile-tab" onclick="switchTab('reviews', this)" id="reviewsTabBtn">
+                <i class="fas fa-star"></i> <span id="reviewsTabLabel" data-i18n="pf_my_reviews">My Reviews</span>
+            </button>
+        </div>
+
+        <!-- Personal Info Tab -->
+        <div class="tab-content active" id="infoTab">
+            <div class="card">
+                <div class="card-header">
+                    <h3 data-i18n="pf_personal">Personal Information</h3>
+                </div>
+                <div class="card-body">
+                    <form id="profileForm" onsubmit="updateProfile(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label data-i18n="pf_name">Full Name</label>
+                                <input type="text" class="form-control" id="pf_name" required
+                                    pattern="[A-Za-z\u0600-\u06FF\s]+"
+                                    title="Name must contain letters only (no numbers)"
+                                    oninput="this.value = this.value.replace(/[^A-Za-z؀-ۿ\s]/g, '')">
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="pf_email">Email Address</label>
+                                <input type="email" class="form-control" id="pf_email" readonly style="background:var(--gray-100); cursor:not-allowed;">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label data-i18n="pf_phone">Phone Number</label>
+                                <input type="tel" class="form-control" id="pf_phone" placeholder="+966 5XX XXX XXXX"
+                                    oninput="this.value = this.value.replace(/[^0-9+]/g, '').slice(0, 15)"
+                                    pattern="[\+]?[0-9]{7,15}"
+                                    title="Phone number must contain numbers only, max 15 digits">
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="pf_role">Role</label>
+                                <input type="text" class="form-control" id="pf_role" readonly style="background:var(--gray-100); cursor:not-allowed; text-transform:capitalize;">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label data-i18n="pf_city">City</label>
+                                <select class="form-control" id="pf_city">
+                                    <option value="" data-i18n="select_city">Select City</option>
+                                    <option value="Riyadh">Riyadh</option>
+                                    <option value="Jeddah">Jeddah</option>
+                                    <option value="Makkah">Makkah</option>
+                                    <option value="Madinah">Madinah</option>
+                                    <option value="Dammam">Dammam</option>
+                                    <option value="Abha">Abha</option>
+                                    <option value="Tabuk">Tabuk</option>
+                                    <option value="AlUla">AlUla</option>
+                                    <option value="Taif">Taif</option>
+                                    <option value="Yanbu">Yanbu</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="pf_region">Region</label>
+                                <select class="form-control" id="pf_region">
+                                    <option value="" data-i18n="select_region">Select Region</option>
+                                    <option value="Central">Central</option>
+                                    <option value="Western">Western</option>
+                                    <option value="Eastern">Eastern</option>
+                                    <option value="Southern">Southern</option>
+                                    <option value="Northern">Northern</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-error" id="profileError" style="text-align:center; margin-bottom:16px;"></div>
+
+                        <div class="success-message" id="profileSuccess">
+                            <i class="fas fa-check-circle"></i>
+                            <h4 data-i18n="pf_updated">Profile Updated!</h4>
+                            <p data-i18n="pf_updated_desc">Your information has been saved successfully.</p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg" id="profileBtn">
+                            <i class="fas fa-save"></i> <span data-i18n="pf_save">Save Changes</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Password Tab -->
+        <div class="tab-content" id="passwordTab">
+            <div class="card">
+                <div class="card-header">
+                    <h3 data-i18n="pf_pw_title">Change Password</h3>
+                </div>
+                <div class="card-body">
+                    <form id="passwordForm" onsubmit="changePassword(event)" style="max-width:500px;">
+                        <div class="form-group">
+                            <label data-i18n="pf_current_pw">Current Password</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" class="form-control" id="pw_current" required placeholder="Enter current password" data-i18n-ph="pf_current_ph">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="pf_new_pw">New Password</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-key"></i>
+                                <input type="password" class="form-control" id="pw_new" required placeholder="Min 6 characters" data-i18n-ph="pf_new_ph">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="pf_confirm_pw">Confirm New Password</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-key"></i>
+                                <input type="password" class="form-control" id="pw_confirm" required placeholder="Confirm new password" data-i18n-ph="pf_confirm_ph">
+                            </div>
+                        </div>
+
+                        <div class="form-error" id="pwError" style="text-align:center; margin-bottom:16px;"></div>
+
+                        <div class="success-message" id="pwSuccess">
+                            <i class="fas fa-check-circle"></i>
+                            <h4 data-i18n="pf_pw_changed">Password Changed!</h4>
+                            <p data-i18n="pf_pw_changed_desc">Your password has been updated successfully.</p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg" id="pwBtn">
+                            <i class="fas fa-save"></i> <span data-i18n="pf_update_pw">Update Password</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Tab -->
+        <div class="tab-content" id="reviewsTab">
+            <div id="reviewsContainer"></div>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+    let currentUser = null;
+
+    checkAuth().then(user => {
+        if (!user) {
+            window.location.href = 'login.html';
+            return;
+        }
+        currentUser = user;
+        populateProfile(user);
+
+        // Set dashboard link
+        const dashLink = document.getElementById('dashLink');
+        if (user.role === 'tourist') dashLink.href = 'trips.html';
+        else if (user.role === 'guide') dashLink.href = 'guide-dashboard.html';
+        else if (user.role === 'admin') dashLink.href = 'admin-dashboard.html';
+
+        // Set reviews tab label
+        if (user.role === 'guide') {
+            document.getElementById('reviewsTabLabel').textContent = t('pf_client_reviews');
+        } else if (user.role === 'admin') {
+            document.getElementById('reviewsTabBtn').style.display = 'none';
+        }
+    });
+
+    function populateProfile(user) {
+        document.getElementById('profileAvatar').textContent = user.full_name ? user.full_name.charAt(0).toUpperCase() : 'U';
+        document.getElementById('profileName').textContent = user.full_name;
+        document.getElementById('profileRole').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+        document.getElementById('profileEmail').textContent = user.email;
+
+        document.getElementById('pf_name').value = user.full_name || '';
+        document.getElementById('pf_email').value = user.email || '';
+        document.getElementById('pf_phone').value = user.phone || '';
+        document.getElementById('pf_role').value = user.role || '';
+        document.getElementById('pf_city').value = user.city || '';
+        document.getElementById('pf_region').value = user.region || '';
+    }
+
+    function switchTab(tab, btn) {
+        document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(tab + 'Tab').classList.add('active');
+
+        if (tab === 'reviews') loadProfileReviews();
+    }
+
+    function updateProfile(e) {
+        e.preventDefault();
+        const btn = document.getElementById('profileBtn');
+        const errorEl = document.getElementById('profileError');
+        const successEl = document.getElementById('profileSuccess');
+        errorEl.classList.remove('show');
+        successEl.classList.remove('show');
+
+        const data = {
+            full_name: document.getElementById('pf_name').value.trim(),
+            phone: document.getElementById('pf_phone').value.trim(),
+            city: document.getElementById('pf_city').value,
+            region: document.getElementById('pf_region').value
+        };
+
+        // Validate name: letters only (English + Arabic)
+        if (!/^[A-Za-z\u0600-\u06FF\s]+$/.test(data.full_name)) {
+            errorEl.textContent = t('err_name_letters');
+            errorEl.classList.add('show');
+            return;
+        }
+
+        // Validate phone: numbers, +, spaces, dashes only
+        if (data.phone && !/^[\+]?[0-9\s\-]{7,15}$/.test(data.phone)) {
+            errorEl.textContent = t('err_phone_numbers');
+            errorEl.classList.add('show');
+            return;
+        }
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        btn.disabled = true;
+
+        fetch('php/users.php?action=update_profile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                successEl.classList.add('show');
+                document.getElementById('profileName').textContent = data.full_name;
+                document.getElementById('profileAvatar').textContent = data.full_name.charAt(0).toUpperCase();
+                // Update localStorage
+                const stored = JSON.parse(localStorage.getItem('stms_user') || '{}');
+                stored.full_name = data.full_name;
+                stored.phone = data.phone;
+                stored.city = data.city;
+                stored.region = data.region;
+                localStorage.setItem('stms_user', JSON.stringify(stored));
+            } else {
+                errorEl.textContent = res.message;
+                errorEl.classList.add('show');
+            }
+            btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+            btn.disabled = false;
+        })
+        .catch(() => {
+            errorEl.textContent = t('err_connection');
+            errorEl.classList.add('show');
+            btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+            btn.disabled = false;
+        });
+    }
+
+    function changePassword(e) {
+        e.preventDefault();
+        const btn = document.getElementById('pwBtn');
+        const errorEl = document.getElementById('pwError');
+        const successEl = document.getElementById('pwSuccess');
+        errorEl.classList.remove('show');
+        successEl.classList.remove('show');
+
+        const data = {
+            current_password: document.getElementById('pw_current').value,
+            new_password: document.getElementById('pw_new').value,
+            confirm_password: document.getElementById('pw_confirm').value
+        };
+
+        if (data.new_password.length < 6) {
+            errorEl.textContent = t('err_pass_length');
+            errorEl.classList.add('show');
+            return;
+        }
+
+        if (data.new_password !== data.confirm_password) {
+            errorEl.textContent = t('err_pass_match');
+            errorEl.classList.add('show');
+            return;
+        }
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+        btn.disabled = true;
+
+        fetch('php/users.php?action=change_password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                successEl.classList.add('show');
+                document.getElementById('passwordForm').reset();
+            } else {
+                errorEl.textContent = res.message;
+                errorEl.classList.add('show');
+            }
+            btn.innerHTML = '<i class="fas fa-save"></i> Update Password';
+            btn.disabled = false;
+        })
+        .catch(() => {
+            errorEl.textContent = t('err_connection');
+            errorEl.classList.add('show');
+            btn.innerHTML = '<i class="fas fa-save"></i> Update Password';
+            btn.disabled = false;
+        });
+    }
+
+    function loadProfileReviews() {
+        const container = document.getElementById('reviewsContainer');
+        container.innerHTML = '<div style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin" style="font-size:1.5rem; color:var(--primary);"></i></div>';
+
+        const action = currentUser.role === 'guide' ? 'guide_reviews' : 'my_reviews';
+
+        fetch(`php/reviews.php?action=${action}`)
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success || !data.reviews.length) {
+                    container.innerHTML = '<div class="card" style="padding:40px; text-align:center;"><i class="fas fa-star" style="font-size:2rem; color:var(--gray-300); margin-bottom:12px;"></i><p style="color:var(--text-light);">No reviews yet.</p></div>';
+                    return;
+                }
+                container.innerHTML = data.reviews.map(r => `
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-avatar">${(r.reviewer_name || r.trip_title || 'R').charAt(0)}</div>
+                            <div class="review-info">
+                                <div class="name">${currentUser.role === 'guide' ? r.reviewer_name : r.trip_title}</div>
+                                <div class="date">${currentUser.role === 'guide' ? 'on "' + r.trip_title + '"' : (r.location_city || '')} - ${formatDate(r.created_at)}</div>
+                            </div>
+                        </div>
+                        <div class="review-stars">${renderStars(r.rating)}</div>
+                        <div class="review-text">${r.comment || ''}</div>
+                    </div>
+                `).join('');
+            })
+            .catch(() => {
+                container.innerHTML = '<div class="card" style="padding:40px; text-align:center;"><p style="color:var(--text-light);">Unable to load reviews.</p></div>';
+            });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Trip - STMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 900px; margin: 0 auto; }
+        .choice-card { background: var(--white); border-radius: 16px; padding: 40px 30px; text-align: center; cursor: pointer; border: 2px solid var(--gray-100); transition: var(--transition); position: relative; overflow: hidden; }
+        .choice-card:hover, .choice-card.selected { border-color: var(--primary); box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+        .choice-card.selected::after { content: '\f058'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; top: 16px; right: 16px; color: var(--primary); font-size: 1.4rem; }
+        .choice-icon { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem; }
+        .choice-card:first-child .choice-icon { background: rgba(0,108,53,0.1); color: var(--primary); }
+        .choice-card:last-child .choice-icon { background: rgba(200,169,81,0.15); color: var(--gold-dark); }
+        .choice-card h3 { font-size: 1.3rem; color: var(--dark); margin-bottom: 10px; }
+        .choice-card p { color: var(--text-light); font-size: 0.9rem; line-height: 1.6; }
+        .booking-section { display: none; }
+        .booking-section.active { display: block; }
+        .city-row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; background: var(--gray-50); border-radius: 10px; padding: 12px 16px; }
+        .city-row select, .city-row input { flex: 1; }
+        .city-row .remove-city { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.1rem; padding: 4px 8px; }
+        .addon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+        .addon-item { background: var(--gray-50); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; border: 2px solid transparent; transition: var(--transition); }
+        .addon-item:hover { border-color: var(--gray-200); }
+        .addon-item.checked { border-color: var(--primary); background: rgba(0,108,53,0.05); }
+        .addon-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); }
+        .addon-item label { cursor: pointer; flex: 1; }
+        .addon-item .addon-price { color: var(--primary); font-weight: 600; font-size: 0.85rem; white-space: nowrap; }
+        .price-summary { background: linear-gradient(135deg, var(--primary), #004d25); color: white; border-radius: 16px; padding: 24px; margin: 20px 0; }
+        .price-summary h3 { color: white; margin-bottom: 16px; }
+        .price-line { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.9rem; opacity: 0.9; }
+        .price-line.total { border-top: 1px solid rgba(255,255,255,0.3); padding-top: 12px; margin-top: 8px; font-size: 1.2rem; font-weight: 700; opacity: 1; }
+        .pkg-card { background: var(--white); border-radius: 16px; overflow: hidden; border: 2px solid var(--gray-100); transition: var(--transition); cursor: pointer; }
+        .pkg-card:hover, .pkg-card.selected { border-color: var(--gold); box-shadow: var(--shadow-lg); }
+        .pkg-card.selected { border-color: var(--primary); }
+        .pkg-card-img { height: 180px; background-size: cover; background-position: center; position: relative; }
+        .pkg-card-body { padding: 20px; }
+        .pkg-card-body h3 { font-size: 1.1rem; color: var(--dark); margin-bottom: 8px; }
+        .pkg-cities-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+        .city-tag { background: rgba(0,108,53,0.1); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .pkg-meta { display: flex; gap: 16px; color: var(--text-light); font-size: 0.85rem; margin: 10px 0; }
+        .pkg-price { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+        .extension-box { background: rgba(200,169,81,0.1); border: 1px solid var(--gold); border-radius: 12px; padding: 16px; margin: 16px 0; }
+        .days-counter { display: flex; align-items: center; gap: 8px; }
+        .days-counter .badge-count { background: var(--primary); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; }
+        .itinerary-preview { max-height: 300px; overflow-y: auto; }
+        @media (max-width: 768px) {
+            .choice-grid { grid-template-columns: 1fr; }
+            .addon-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="index.html" class="sidebar-logo">
+            <div class="logo-icon"><i class="fas fa-kaaba"></i></div>
+            STMS
+        </a>
+        <button class="lang-switch" onclick="toggleLang()" style="margin:0 16px 10px;">العربية</button>
+        <div class="sidebar-menu">
+            <div class="sidebar-label" data-i18n="trips_navigation">Navigation</div>
+            <a href="book.html" class="sidebar-link active">
+                <i class="fas fa-shopping-cart"></i> <span data-i18n="book_trip_nav">Book a Trip</span>
+            </a>
+            <a href="trips.html" class="sidebar-link">
+                <i class="fas fa-compass"></i> <span data-i18n="trips_browse">Browse Trips</span>
+            </a>
+            <a href="index.html" class="sidebar-link">
+                <i class="fas fa-home"></i> <span data-i18n="trips_home">Home</span>
+            </a>
+            <div class="sidebar-label" data-i18n="trips_my_account">My Account</div>
+            <a href="trips.html" class="sidebar-link" onclick="localStorage.setItem('stms_show','bookings')">
+                <i class="fas fa-ticket-alt"></i> <span data-i18n="trips_my_bookings">My Bookings</span>
+            </a>
+            <a href="profile.html" class="sidebar-link">
+                <i class="fas fa-user-circle"></i> <span data-i18n="trips_profile">Profile</span>
+            </a>
+            <div class="sidebar-label" data-i18n="trips_quick_links">Quick Links</div>
+            <a href="index.html#about" class="sidebar-link">
+                <i class="fas fa-info-circle"></i> <span data-i18n="trips_about">About</span>
+            </a>
+            <a href="index.html#contact" class="sidebar-link">
+                <i class="fas fa-envelope"></i> <span data-i18n="trips_contact">Contact</span>
+            </a>
+            <a href="#" class="sidebar-link" onclick="handleLogout(); return false;">
+                <i class="fas fa-sign-out-alt"></i> <span data-i18n="trips_logout">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <button class="mobile-toggle" onclick="toggleSidebar()" style="display:none; margin-bottom:10px;">
+                    <i class="fas fa-bars" style="color:var(--dark);"></i>
+                </button>
+                <h1 id="pageTitle" data-i18n="bk_title">Book Your Trip</h1>
+                <p id="pageSubtitle" data-i18n="bk_subtitle">Choose how you want to plan your Saudi adventure</p>
+            </div>
+            <div id="userGreeting">
+                <span style="color:var(--text-light); font-size:0.9rem;" data-i18n="gd_welcome">Welcome, </span>
+                <strong id="userName" style="color:var(--dark);"></strong>
+            </div>
+        </div>
+
+        <!-- Step 1: Choose booking type -->
+        <div id="stepChoice" class="booking-section active">
+            <div class="choice-grid">
+                <div class="choice-card" onclick="selectBookingType('self_planned')">
+                    <div class="choice-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    <h3 data-i18n="bk_self_planned">Self-Planned Booking</h3>
+                    <p>Plan your own itinerary. Choose your destinations, set the duration (up to 10 days with extension option), and customize your trip with optional accommodation and meals.</p>
+                    <div style="margin-top:16px;">
+                        <span style="display:inline-flex; align-items:center; gap:6px; color:var(--primary); font-size:0.85rem;"><i class="fas fa-check"></i> <span data-i18n="bk_flexibility">Full flexibility</span></span><br>
+                        <span style="display:inline-flex; align-items:center; gap:6px; color:var(--primary); font-size:0.85rem; margin-top:4px;"><i class="fas fa-check"></i> Dynamic city pricing</span><br>
+                        <span style="display:inline-flex; align-items:center; gap:6px; color:var(--primary); font-size:0.85rem; margin-top:4px;"><i class="fas fa-check"></i> Extension available</span>
+                    </div>
+                </div>
+                <div class="choice-card" onclick="selectBookingType('package')">
+                    <div class="choice-icon"><i class="fas fa-suitcase-rolling"></i></div>
+                    <h3 data-i18n="bk_package">Pre-Designed Package</h3>
+                    <p>Choose from expertly crafted packages by certified tour guides. Fixed duration, structured itinerary, multiple cities, and transportation included by default.</p>
+                    <div style="margin-top:16px;">
+                        <span style="display:inline-flex; align-items:center; gap:6px; color:var(--gold-dark); font-size:0.85rem;"><i class="fas fa-check"></i> Expert guide included</span><br>
+                        <span style="display:inline-flex; align-items:center; gap:6px; color:var(--gold-dark); font-size:0.85rem; margin-top:4px;"><i class="fas fa-check"></i> Multi-city itineraries</span><br>
+                        <span style="display:inline-flex; align-items:center; gap:6px; color:var(--gold-dark); font-size:0.85rem; margin-top:4px;"><i class="fas fa-check"></i> Transportation included</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2A: Self-Planned Booking -->
+        <div id="stepSelfPlanned" class="booking-section">
+            <div style="margin-bottom:20px;">
+                <button class="btn btn-outline-primary btn-sm" onclick="goBack()"><i class="fas fa-arrow-left"></i> <span data-i18n="bk_back_options">Back to Options</span></button>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 380px; gap:24px;">
+                <div>
+                    <!-- Cities Selection -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3><i class="fas fa-map-marker-alt" style="color:var(--primary); margin-right:8px;"></i> <span data-i18n="bk_choose_dest">Choose Destinations</span></h3>
+                            <div class="days-counter">
+                                <span style="color:var(--text-light); font-size:0.85rem;" data-i18n="bk_total_days">Total Days:</span>
+                                <div class="badge-count" id="totalDaysCount">0</div>
+                                <span style="color:var(--text-light); font-size:0.75rem;">/10 max</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="citiesContainer"></div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addCity()" id="addCityBtn">
+                                <i class="fas fa-plus"></i> <span data-i18n="bk_add_dest">Add Destination</span>
+                            </button>
+
+                            <!-- Extension Option -->
+                            <div class="extension-box" id="extensionBox" style="display:none;">
+                                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                    <i class="fas fa-clock" style="color:var(--gold-dark);"></i>
+                                    <strong style="color:var(--dark);" data-i18n="bk_extension">Need More Time?</strong>
+                                </div>
+                                <p style="color:var(--text-light); font-size:0.85rem; margin-bottom:10px;">The maximum trip duration is 10 days. You can add extension days if needed.</p>
+                                <div class="form-row">
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label style="font-size:0.85rem;" data-i18n="bk_ext_days">Extension Days</label>
+                                        <input type="number" class="form-control" id="extensionDays" min="0" max="5" value="0" onchange="recalculatePrice()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trip Details -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3><i class="fas fa-calendar" style="color:var(--gold-dark); margin-right:8px;"></i> <span data-i18n="bk_trip_details">Trip Details</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label data-i18n="bk_start_date">Start Date</label>
+                                    <input type="date" class="form-control" id="spStartDate" required onchange="validateStartDate(this)">
+                                </div>
+                                <div class="form-group">
+                                    <label data-i18n="bk_num_people">Number of People</label>
+                                    <select class="form-control" id="spNumPeople" onchange="recalculatePrice()">
+                                        <option value="1">1 Person</option>
+                                        <option value="2">2 People</option>
+                                        <option value="3">3 People</option>
+                                        <option value="4">4 People</option>
+                                        <option value="5">5 People</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-map-marker-alt" style="color:var(--primary);"></i> Location / Meeting Point <span style="color:var(--text-light);font-size:0.8rem;">(Optional)</span></label>
+                                <input type="text" class="form-control" id="spLocation" placeholder="e.g., Riyadh Airport, King Fahd Road...">
+                            </div>
+                            <div class="form-group">
+                                <label>Special Notes <span style="color:var(--text-light);font-size:0.8rem;">(Optional)</span></label>
+                                <textarea class="form-control" id="spNotes" rows="2" placeholder="Any special requests..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add-ons -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3><i class="fas fa-concierge-bell" style="color:var(--info); margin-right:8px;"></i> <span data-i18n="bk_addons">Optional Add-ons</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <p style="color:var(--text-light); font-size:0.85rem; margin-bottom:12px;"><i class="fas fa-bus" style="color:var(--primary);"></i> <strong data-i18n="bk_transport_incl">Transportation is included by default</strong> in all bookings.</p>
+                            <div class="addon-grid">
+                                <div class="addon-item" onclick="toggleAddon(this, 'sp_accommodation')">
+                                    <input type="checkbox" id="sp_accommodation" onchange="recalculatePrice()">
+                                    <div>
+                                        <label for="sp_accommodation"><strong data-i18n="bk_accommodation">Accommodation</strong></label>
+                                        <div style="font-size:0.8rem; color:var(--text-light);">Hotel stays per night</div>
+                                    </div>
+                                    <span class="addon-price"><i class="fas fa-bed"></i></span>
+                                </div>
+                                <div class="addon-item" onclick="toggleAddon(this, 'sp_breakfast')">
+                                    <input type="checkbox" id="sp_breakfast" onchange="recalculatePrice()">
+                                    <div>
+                                        <label for="sp_breakfast"><strong data-i18n="bk_breakfast">Breakfast</strong></label>
+                                        <div style="font-size:0.8rem; color:var(--text-light);">Daily breakfast</div>
+                                    </div>
+                                    <span class="addon-price"><i class="fas fa-coffee"></i></span>
+                                </div>
+                                <div class="addon-item" onclick="toggleAddon(this, 'sp_lunch')">
+                                    <input type="checkbox" id="sp_lunch" onchange="recalculatePrice()">
+                                    <div>
+                                        <label for="sp_lunch"><strong data-i18n="bk_lunch">Lunch</strong></label>
+                                        <div style="font-size:0.8rem; color:var(--text-light);">Daily lunch</div>
+                                    </div>
+                                    <span class="addon-price"><i class="fas fa-utensils"></i></span>
+                                </div>
+                                <div class="addon-item" onclick="toggleAddon(this, 'sp_dinner')">
+                                    <input type="checkbox" id="sp_dinner" onchange="recalculatePrice()">
+                                    <div>
+                                        <label for="sp_dinner"><strong data-i18n="bk_dinner">Dinner</strong></label>
+                                        <div style="font-size:0.8rem; color:var(--text-light);">Daily dinner</div>
+                                    </div>
+                                    <span class="addon-price"><i class="fas fa-moon"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Summary Sidebar -->
+                <div>
+                    <div style="position:sticky; top:20px;">
+                        <div class="price-summary" id="spPriceSummary">
+                            <h3><i class="fas fa-receipt" style="margin-right:8px;"></i> <span data-i18n="bk_price_summary">Price Summary</span></h3>
+                            <div id="spBreakdown">
+                                <div class="price-line"><span>Select destinations to see pricing</span></div>
+                            </div>
+                            <div class="price-line total">
+                                <span>Total</span>
+                                <span id="spTotalPrice">0 SAR</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-gold btn-block btn-lg" onclick="submitSelfPlanned()" id="spSubmitBtn" style="margin-top:12px;">
+                            <i class="fas fa-check-circle"></i> <span data-i18n="bk_confirm">Confirm Booking</span>
+                        </button>
+                        <div class="form-error mt-2" id="spError" style="text-align:center;"></div>
+                        <div class="success-message mt-2" id="spSuccess">
+                            <i class="fas fa-check-circle"></i>
+                            <h4 data-i18n="td_booked_title">Booking Confirmed!</h4>
+                            <p id="spSuccessMsg">Your trip has been booked successfully!</p>
+                            <div style="background:rgba(255,165,0,0.15); border:1px solid orange; border-radius:8px; padding:12px; margin-top:10px; font-size:0.85rem;">
+                                <i class="fas fa-info-circle" style="color:orange;"></i>
+                                <span data-i18n="bk_refund_notice">You can cancel up to 12 hours before the trip for a full refund. After that, no refund will be issued.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2B: Package Selection -->
+        <div id="stepPackage" class="booking-section">
+            <div style="margin-bottom:20px;">
+                <button class="btn btn-outline-primary btn-sm" onclick="goBack()"><i class="fas fa-arrow-left"></i> <span data-i18n="bk_back_options">Back to Options</span></button>
+            </div>
+
+            <!-- Package List -->
+            <div id="packageList">
+                <div class="grid-3" id="packageGrid">
+                    <div class="text-center" style="grid-column: 1/-1; padding:60px 0;">
+                        <i class="fas fa-spinner fa-spin" style="font-size:2rem; color:var(--primary);"></i>
+                        <p style="margin-top:12px; color:var(--text-light);">Loading packages...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Package Detail + Booking Form (hidden until selected) -->
+            <div id="packageDetail" style="display:none;">
+                <div style="display:grid; grid-template-columns: 1fr 380px; gap:24px;">
+                    <div>
+                        <!-- Package Info -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h3 id="pkgTitle"></h3>
+                                <span class="status-badge open" id="pkgDuration"></span>
+                            </div>
+                            <div class="card-body">
+                                <p id="pkgDescription" style="color:var(--text); line-height:1.7; margin-bottom:16px;"></p>
+                                <div id="pkgCitiesTags" class="pkg-cities-tags"></div>
+                                <div id="pkgMeta" class="pkg-meta" style="margin-top:12px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Package Images -->
+                        <div class="card mb-3" id="pkgImagesCard" style="display:none;">
+                            <div class="card-header"><h3><i class="fas fa-images" style="color:var(--gold-dark); margin-right:8px;"></i> Gallery</h3></div>
+                            <div class="card-body" id="pkgImages" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+                        </div>
+
+                        <!-- Package Itinerary -->
+                        <div class="card mb-3">
+                            <div class="card-header"><h3><i class="fas fa-route" style="color:var(--primary); margin-right:8px;"></i> Itinerary</h3></div>
+                            <div class="card-body itinerary-preview" id="pkgItinerary"></div>
+                        </div>
+
+                        <!-- Guide Info -->
+                        <div class="card mb-3">
+                            <div class="card-header"><h3><i class="fas fa-user-tie" style="color:var(--info); margin-right:8px;"></i> Your Guide</h3></div>
+                            <div class="card-body">
+                                <div style="display:flex; align-items:center; gap:16px;">
+                                    <div id="pkgGuideAvatar" style="width:56px;height:56px;border-radius:50%;background:rgba(0,108,53,0.1);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;flex-shrink:0;">G</div>
+                                    <div>
+                                        <h4 id="pkgGuideName" style="color:var(--dark); margin-bottom:2px;"></h4>
+                                        <p id="pkgGuideInfo" style="color:var(--text-light); font-size:0.9rem;"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Package Booking Sidebar -->
+                    <div>
+                        <div style="position:sticky; top:20px;">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div style="text-align:center; margin-bottom:16px;">
+                                        <div style="font-size:2rem; font-weight:800; color:var(--primary);" id="pkgBasePrice">0 SAR</div>
+                                        <p style="color:var(--text-light); font-size:0.85rem;">per person (base price)</p>
+                                    </div>
+
+                                    <div style="background:var(--gray-50); border-radius:10px; padding:12px; margin-bottom:16px; text-align:center;">
+                                        <div style="font-size:0.75rem; color:var(--text-light); text-transform:uppercase;">Fixed Duration</div>
+                                        <strong id="pkgDurationVal" style="color:var(--dark);">10 Days</strong>
+                                        <div style="font-size:0.75rem; color:var(--text-light); margin-top:2px;">Cannot be extended</div>
+                                    </div>
+
+                                    <p style="color:var(--text-light); font-size:0.85rem; margin-bottom:12px;"><i class="fas fa-bus" style="color:var(--primary);"></i> <strong>Transportation included</strong></p>
+
+                                    <div class="form-group">
+                                        <label data-i18n="bk_start_date">Start Date</label>
+                                        <input type="date" class="form-control" id="pkgStartDate" readonly style="background:var(--gray-50); cursor:not-allowed; color:var(--dark); font-weight:600;">
+                                        <small style="color:var(--text-light); font-size:0.78rem;"><i class="fas fa-lock" style="margin-right:4px;"></i><span data-i18n="bk_date_fixed">Fixed by the guide – cannot be changed</span></small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label data-i18n="bk_num_people">Number of People</label>
+                                        <select class="form-control" id="pkgNumPeople" onchange="recalcPackagePrice()">
+                                            <option value="1">1 Person</option>
+                                            <option value="2">2 People</option>
+                                            <option value="3">3 People</option>
+                                            <option value="4">4 People</option>
+                                            <option value="5">5 People</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Special Notes <span style="color:var(--text-light);font-size:0.8rem;">(Optional)</span></label>
+                                        <textarea class="form-control" id="pkgNotes" rows="2" placeholder="Any special requests..."></textarea>
+                                    </div>
+
+                                    <h4 style="margin:16px 0 10px; color:var(--dark); font-size:0.95rem;" data-i18n="bk_addons">Optional Add-ons</h4>
+                                    <div style="display:flex; flex-direction:column; gap:8px;">
+                                        <div class="addon-item" onclick="toggleAddon(this, 'pkg_accommodation')">
+                                            <input type="checkbox" id="pkg_accommodation" onchange="recalcPackagePrice()">
+                                            <label for="pkg_accommodation"><strong data-i18n="bk_accommodation">Accommodation</strong></label>
+                                            <span class="addon-price"><i class="fas fa-bed"></i></span>
+                                        </div>
+                                        <div class="addon-item" onclick="toggleAddon(this, 'pkg_breakfast')">
+                                            <input type="checkbox" id="pkg_breakfast" onchange="recalcPackagePrice()">
+                                            <label for="pkg_breakfast"><strong data-i18n="bk_breakfast">Breakfast</strong></label>
+                                            <span class="addon-price"><i class="fas fa-coffee"></i></span>
+                                        </div>
+                                        <div class="addon-item" onclick="toggleAddon(this, 'pkg_lunch')">
+                                            <input type="checkbox" id="pkg_lunch" onchange="recalcPackagePrice()">
+                                            <label for="pkg_lunch"><strong data-i18n="bk_lunch">Lunch</strong></label>
+                                            <span class="addon-price"><i class="fas fa-utensils"></i></span>
+                                        </div>
+                                        <div class="addon-item" onclick="toggleAddon(this, 'pkg_dinner')">
+                                            <input type="checkbox" id="pkg_dinner" onchange="recalcPackagePrice()">
+                                            <label for="pkg_dinner"><strong data-i18n="bk_dinner">Dinner</strong></label>
+                                            <span class="addon-price"><i class="fas fa-moon"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="price-summary" id="pkgPriceSummary">
+                                <h3><i class="fas fa-receipt" style="margin-right:8px;"></i> <span data-i18n="bk_price_summary">Price Summary</span></h3>
+                                <div id="pkgBreakdown">
+                                    <div class="price-line"><span>Base package price</span><span id="pkgBreakBase">0 SAR</span></div>
+                                </div>
+                                <div class="price-line total">
+                                    <span>Total</span>
+                                    <span id="pkgTotalPrice">0 SAR</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-gold btn-block btn-lg" onclick="submitPackageBooking()" id="pkgSubmitBtn" style="margin-top:12px;">
+                                <i class="fas fa-check-circle"></i> <span data-i18n="bk_confirm_pkg">Confirm Package Booking</span>
+                            </button>
+                            <button class="btn btn-outline-primary btn-block btn-sm" onclick="backToPackages()" style="margin-top:8px;">
+                                <i class="fas fa-arrow-left"></i> Choose Different Package
+                            </button>
+                            <div class="form-error mt-2" id="pkgError" style="text-align:center;"></div>
+                            <div class="success-message mt-2" id="pkgSuccess">
+                                <i class="fas fa-check-circle"></i>
+                                <h4>Package Booked!</h4>
+                                <p>Your package booking has been submitted. The guide will confirm your reservation shortly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+    let cityPricing = {};
+    let allPackages = [];
+    let selectedPackage = null;
+    let currentPriceData = { per_person: 0, total_price: 0, breakdown: [] };
+
+    // Auth check
+    checkAuth().then(user => {
+        if (!user || user.role !== 'tourist') {
+            window.location.href = 'login.html';
+            return;
+        }
+        document.getElementById('userName').textContent = user.full_name;
+    });
+
+    // Load city pricing
+    fetch('php/packages.php?action=city_pricing')
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                data.pricing.forEach(p => { cityPricing[p.city_name] = p; });
+            }
+        })
+        .catch(() => {
+            // Fallback pricing
+            cityPricing = {
+                'Riyadh': { base_price_per_day: 350, accommodation_per_night: 450, breakfast_price: 60, lunch_price: 95, dinner_price: 120, transportation_per_day: 150 },
+                'Jeddah': { base_price_per_day: 300, accommodation_per_night: 400, breakfast_price: 55, lunch_price: 85, dinner_price: 110, transportation_per_day: 130 },
+                'Makkah': { base_price_per_day: 320, accommodation_per_night: 500, breakfast_price: 55, lunch_price: 90, dinner_price: 115, transportation_per_day: 120 },
+                'Madinah': { base_price_per_day: 280, accommodation_per_night: 420, breakfast_price: 50, lunch_price: 80, dinner_price: 100, transportation_per_day: 110 },
+                'Dammam': { base_price_per_day: 250, accommodation_per_night: 320, breakfast_price: 45, lunch_price: 75, dinner_price: 95, transportation_per_day: 120 },
+                'Abha': { base_price_per_day: 220, accommodation_per_night: 280, breakfast_price: 40, lunch_price: 70, dinner_price: 85, transportation_per_day: 100 },
+                'Tabuk': { base_price_per_day: 200, accommodation_per_night: 260, breakfast_price: 40, lunch_price: 65, dinner_price: 80, transportation_per_day: 90 },
+                'AlUla': { base_price_per_day: 180, accommodation_per_night: 240, breakfast_price: 35, lunch_price: 60, dinner_price: 75, transportation_per_day: 80 },
+                'Taif': { base_price_per_day: 200, accommodation_per_night: 270, breakfast_price: 40, lunch_price: 65, dinner_price: 80, transportation_per_day: 90 },
+                'Yanbu': { base_price_per_day: 190, accommodation_per_night: 250, breakfast_price: 35, lunch_price: 60, dinner_price: 75, transportation_per_day: 85 }
+            };
+        });
+
+    // Set min date to today for self-planned only
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('spStartDate').min = today;
+    document.getElementById('spStartDate').value = today;
+
+    function validateStartDate(input) {
+        const today = new Date().toISOString().split('T')[0];
+        if (input.value < today) {
+            input.value = today;
+            showError('spError', currentLang === 'ar' ? 'لا يمكن اختيار تاريخ في الماضي' : 'Cannot select a past date');
+        }
+    }
+
+    function selectBookingType(type) {
+        document.getElementById('stepChoice').classList.remove('active');
+        if (type === 'self_planned') {
+            document.getElementById('stepSelfPlanned').classList.add('active');
+            document.getElementById('pageTitle').textContent = t('bk_self_planned_title');
+            document.getElementById('pageSubtitle').textContent = t('bk_self_planned_sub');
+            if (!document.getElementById('citiesContainer').children.length) addCity();
+        } else {
+            document.getElementById('stepPackage').classList.add('active');
+            document.getElementById('pageTitle').textContent = t('bk_choose_pkg_title');
+            document.getElementById('pageSubtitle').textContent = t('bk_choose_pkg_sub');
+            loadPackages();
+        }
+    }
+
+    function goBack() {
+        document.querySelectorAll('.booking-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('stepChoice').classList.add('active');
+        document.getElementById('pageTitle').textContent = t('bk_main_title');
+        document.getElementById('pageSubtitle').textContent = t('bk_main_sub');
+    }
+
+    // ==================== SELF-PLANNED ====================
+    const cityOptions = ['Riyadh','Jeddah','Makkah','Madinah','Dammam','Abha','Tabuk','AlUla','Taif','Yanbu'];
+
+    function addCity() {
+        const container = document.getElementById('citiesContainer');
+        const idx = container.children.length;
+        const row = document.createElement('div');
+        row.className = 'city-row';
+        row.innerHTML = `
+            <select class="form-control" onchange="recalculatePrice()">
+                <option value="">Select City</option>
+                ${cityOptions.map(c => `<option value="${c}">${c}</option>`).join('')}
+            </select>
+            <input type="number" class="form-control" min="1" max="10" value="1" placeholder="Days" style="max-width:100px;" onchange="recalculatePrice()">
+            <button type="button" class="remove-city" onclick="removeCity(this)" title="Remove"><i class="fas fa-times"></i></button>
+        `;
+        container.appendChild(row);
+        updateDaysCount();
+    }
+
+    function removeCity(btn) {
+        btn.closest('.city-row').remove();
+        recalculatePrice();
+    }
+
+    function getCitySelections() {
+        const rows = document.querySelectorAll('#citiesContainer .city-row');
+        const cities = [];
+        rows.forEach(row => {
+            const city = row.querySelector('select').value;
+            const days = parseInt(row.querySelector('input').value) || 1;
+            if (city) cities.push({ city_name: city, days_in_city: days });
+        });
+        return cities;
+    }
+
+    function updateDaysCount() {
+        const cities = getCitySelections();
+        let total = cities.reduce((sum, c) => sum + c.days_in_city, 0);
+        const ext = parseInt(document.getElementById('extensionDays').value) || 0;
+        total += ext;
+        document.getElementById('totalDaysCount').textContent = total;
+
+        // Show extension box if at limit
+        if (cities.reduce((s, c) => s + c.days_in_city, 0) >= 10) {
+            document.getElementById('extensionBox').style.display = 'block';
+        }
+
+        // Color the counter
+        const counter = document.getElementById('totalDaysCount');
+        if (total > 10 && ext === 0) {
+            counter.style.background = 'var(--danger)';
+        } else if (total > 10) {
+            counter.style.background = 'var(--gold-dark)';
+        } else {
+            counter.style.background = 'var(--primary)';
+        }
+    }
+
+    // Change 3: Calculate price with day rule - first and last day no meals
+    function calcPriceWithDayRule(cities, numPeople, addons, pricing) {
+        let perPerson = 0;
+        const breakdown = [];
+        let globalDayIndex = 0;
+        const totalDays = cities.reduce((s, c) => s + c.days_in_city, 0)
+                        + (parseInt(document.getElementById('extensionDays')?.value) || 0);
+
+        cities.forEach(cityData => {
+            const cityName = cityData.city_name;
+            const days = cityData.days_in_city;
+            const cp = pricing[cityName];
+            if (!cp) return;
+
+            const nights = Math.max(0, days - 1);
+
+            // Base price per day
+            const base = days * parseFloat(cp.base_price_per_day);
+            perPerson += base;
+            breakdown.push({ label: (currentLang === 'ar' ? `السعر الأساسي في ${cityName} (${days} أيام)` : `Base price in ${cityName} (${days} days)`), amount: base });
+
+            // Transportation
+            const transport = days * parseFloat(cp.transportation_per_day);
+            perPerson += transport;
+            breakdown.push({ label: (currentLang === 'ar' ? `المواصلات في ${cityName} (${days} أيام)` : `Transportation in ${cityName} (${days} days)`), amount: transport });
+
+            // Accommodation (skip last night of last city)
+            if (addons.accommodation && nights > 0) {
+                const acc = nights * parseFloat(cp.accommodation_per_night);
+                perPerson += acc;
+                breakdown.push({ label: (currentLang === 'ar' ? `الإقامة في ${cityName} (${nights} ليالي)` : `Accommodation in ${cityName} (${nights} nights)`), amount: acc });
+            }
+
+            // Meals: skip first day (index 0) and last day (index totalDays-1)
+            for (let d = 0; d < days; d++) {
+                const isFirstDay = (globalDayIndex === 0);
+                const isLastDay = (globalDayIndex === totalDays - 1);
+                const allowMeals = !isFirstDay && !isLastDay;
+
+                if (allowMeals) {
+                    if (addons.breakfast) {
+                        perPerson += parseFloat(cp.breakfast_price);
+                        breakdown.push({ label: (currentLang === 'ar' ? `إفطار - ${cityName}` : `Breakfast - ${cityName}`), amount: parseFloat(cp.breakfast_price) });
+                    }
+                    if (addons.lunch) {
+                        perPerson += parseFloat(cp.lunch_price);
+                        breakdown.push({ label: (currentLang === 'ar' ? `غداء - ${cityName}` : `Lunch - ${cityName}`), amount: parseFloat(cp.lunch_price) });
+                    }
+                    if (addons.dinner) {
+                        perPerson += parseFloat(cp.dinner_price);
+                        breakdown.push({ label: (currentLang === 'ar' ? `عشاء - ${cityName}` : `Dinner - ${cityName}`), amount: parseFloat(cp.dinner_price) });
+                    }
+                } else {
+                    const dayLabel = isFirstDay ? (currentLang === 'ar' ? 'اليوم الأول بدون وجبات' : 'First day - no meals') : (currentLang === 'ar' ? 'اليوم الأخير بدون وجبات' : 'Last day - no meals');
+                    if (addons.breakfast || addons.lunch || addons.dinner) {
+                        breakdown.push({ label: dayLabel, note: true });
+                    }
+                }
+                globalDayIndex++;
+            }
+        });
+
+        const grandTotal = perPerson * numPeople;
+        return { perPerson, grandTotal, breakdown };
+    }
+
+    function recalculatePrice() {
+        updateDaysCount();
+        const cities = getCitySelections();
+        if (!cities.length) {
+            document.getElementById('spBreakdown').innerHTML = '<div class="price-line"><span>' + (currentLang === 'ar' ? 'اختر وجهات لعرض السعر' : 'Select destinations to see pricing') + '</span></div>';
+            document.getElementById('spTotalPrice').textContent = '0 SAR';
+            return;
+        }
+
+        const numPeople = parseInt(document.getElementById('spNumPeople').value) || 1;
+        const addons = {
+            accommodation: document.getElementById('sp_accommodation').checked,
+            breakfast: document.getElementById('sp_breakfast').checked,
+            lunch: document.getElementById('sp_lunch').checked,
+            dinner: document.getElementById('sp_dinner').checked
+        };
+
+        const { perPerson, grandTotal, breakdown } = calcPriceWithDayRule(cities, numPeople, addons, cityPricing);
+        currentPriceData = { per_person: perPerson, total_price: grandTotal, breakdown };
+
+        let html = breakdown.map(b => {
+            if (b.note) return `<div class="price-line" style="font-size:0.75rem;opacity:0.7;font-style:italic;"><span>${b.label}</span></div>`;
+            return `<div class="price-line"><span>${b.label}</span><span>${b.amount.toFixed(0)} SAR</span></div>`;
+        }).join('');
+        if (numPeople > 1) {
+            html += `<div class="price-line" style="border-top:1px solid rgba(255,255,255,0.2);padding-top:8px;margin-top:6px;"><span>${currentLang === 'ar' ? 'للشخص الواحد' : 'Per person'}</span><span>${perPerson.toFixed(0)} SAR</span></div>`;
+            html += `<div class="price-line"><span>x ${numPeople} ${currentLang === 'ar' ? 'أشخاص' : 'people'}</span><span></span></div>`;
+        }
+        document.getElementById('spBreakdown').innerHTML = html;
+        document.getElementById('spTotalPrice').textContent = grandTotal.toFixed(0) + ' SAR';
+    }
+
+    function toggleAddon(el, id) {
+        const cb = document.getElementById(id);
+        if (el.tagName !== 'INPUT') cb.checked = !cb.checked;
+        el.closest('.addon-item').classList.toggle('checked', cb.checked);
+        if (id.startsWith('sp_')) recalculatePrice();
+        else recalcPackagePrice();
+    }
+
+    function submitSelfPlanned() {
+        const cities = getCitySelections();
+        if (!cities.length) {
+            showError('spError', 'Please select at least one destination');
+            return;
+        }
+
+        const totalDays = cities.reduce((s, c) => s + c.days_in_city, 0);
+        const ext = parseInt(document.getElementById('extensionDays').value) || 0;
+        if (totalDays > 10 && ext === 0) {
+            showError('spError', 'Maximum 10 days without extension. Enable extension or reduce days.');
+            return;
+        }
+
+        const startDate = document.getElementById('spStartDate').value;
+        if (!startDate) {
+            showError('spError', 'Please select a start date');
+            return;
+        }
+
+        const btn = document.getElementById('spSubmitBtn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        btn.disabled = true;
+
+        const data = {
+            cities,
+            num_people: parseInt(document.getElementById('spNumPeople').value),
+            notes: document.getElementById('spNotes').value,
+            location: document.getElementById('spLocation') ? document.getElementById('spLocation').value : '',
+            include_accommodation: document.getElementById('sp_accommodation').checked ? 1 : 0,
+            include_breakfast: document.getElementById('sp_breakfast').checked ? 1 : 0,
+            include_lunch: document.getElementById('sp_lunch').checked ? 1 : 0,
+            include_dinner: document.getElementById('sp_dinner').checked ? 1 : 0,
+            extension_days: ext,
+            start_date: startDate,
+            total_price: currentPriceData.total_price
+        };
+
+        fetch('php/bookings.php?action=create_self_planned', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                document.getElementById('spSuccess').classList.add('show');
+                btn.style.display = 'none';
+            } else {
+                showError('spError', res.message);
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Booking';
+                btn.disabled = false;
+            }
+        })
+        .catch(() => {
+            showError('spError', 'Connection error. Please try again.');
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Booking';
+            btn.disabled = false;
+        });
+    }
+
+    // ==================== PACKAGES ====================
+    function loadPackages() {
+        fetch('php/packages.php?action=list', { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    allPackages = data.packages;
+                    renderPackages(data.packages);
+                } else {
+                    // Try without auth check
+                    renderPackagesError(data.message || 'Failed to load packages');
+                }
+            })
+            .catch(err => {
+                renderPackagesError('Connection error — please refresh the page');
+            });
+    }
+
+    function renderPackagesError(msg) {
+        const grid = document.getElementById('packageGrid');
+        grid.innerHTML = `
+            <div style="grid-column:1/-1; text-align:center; padding:60px 20px;">
+                <i class="fas fa-exclamation-circle" style="font-size:3rem; color:var(--gray-300); margin-bottom:16px;"></i>
+                <h3 style="color:var(--text-light); margin-bottom:8px;">${msg}</h3>
+                <button class="btn btn-outline-primary" onclick="loadPackages()">
+                    <i class="fas fa-redo"></i> Retry
+                </button>
+            </div>
+        `;
+    }
+
+    function renderPackages(packages) {
+        const grid = document.getElementById('packageGrid');
+        if (!packages.length) {
+            grid.innerHTML = '<div class="text-center" style="grid-column:1/-1; padding:60px 0;"><i class="fas fa-box-open" style="font-size:3rem; color:var(--gray-300);"></i><h3 style="color:var(--text-light); margin-top:16px;">No packages available yet</h3></div>';
+            return;
+        }
+        grid.innerHTML = packages.map(pkg => `
+            <div class="pkg-card" onclick="selectPackage(${pkg.id})">
+                <div class="pkg-card-img" style="${pkg.cover_image ? `background-image:url('${pkg.cover_image}')` : 'background:var(--gray-100); display:flex; align-items:center; justify-content:center;'}">
+                    ${!pkg.cover_image ? '<i class="fas fa-suitcase-rolling" style="font-size:2.5rem; color:var(--gray-300);"></i>' : ''}
+                    <div class="price-badge">${Number(pkg.base_price).toFixed(0)} SAR</div>
+                </div>
+                <div class="pkg-card-body">
+                    <h3>${pkg.title}</h3>
+                    <div class="pkg-cities-tags">
+                        ${(pkg.cities || []).map(c => `<span class="city-tag"><i class="fas fa-map-pin"></i> ${c.city_name} (${c.days_in_city}d)</span>`).join('')}
+                    </div>
+                    <div class="pkg-meta">
+                        <span><i class="fas fa-clock"></i> ${pkg.duration_days} Days</span>
+                        <span><i class="fas fa-bus"></i> Transport incl.</span>
+                        <span><i class="fas fa-users"></i> Max ${pkg.max_tourists}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+                        <span class="pkg-price">${Number(pkg.base_price).toFixed(0)} SAR</span>
+                        <span style="color:var(--text-light); font-size:0.85rem;">by ${pkg.guide_name}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function selectPackage(id) {
+        fetch(`php/packages.php?action=get&id=${id}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    selectedPackage = data.package;
+                    showPackageDetail(data.package);
+                }
+            })
+            .catch(() => {
+                // Use from cached list
+                const pkg = allPackages.find(p => p.id == id);
+                if (pkg) { selectedPackage = pkg; showPackageDetail(pkg); }
+            });
+    }
+
+    function showPackageDetail(pkg) {
+        document.getElementById('packageList').style.display = 'none';
+        document.getElementById('packageDetail').style.display = 'block';
+
+        document.getElementById('pkgTitle').textContent = pkg.title;
+        document.getElementById('pkgDescription').textContent = pkg.description;
+        document.getElementById('pkgDuration').textContent = pkg.duration_days + ' Days Fixed';
+        document.getElementById('pkgDurationVal').textContent = pkg.duration_days + ' Days';
+        document.getElementById('pkgBasePrice').textContent = Number(pkg.base_price).toFixed(0) + ' SAR';
+
+        // Set fixed start date from package (readonly) - تاريخ المرشد فقط
+        const pkgDateEl = document.getElementById('pkgStartDate');
+        if (pkg.start_date) {
+            pkgDateEl.value = pkg.start_date;
+        } else {
+            pkgDateEl.value = '';
+            pkgDateEl.removeAttribute('required');
+            pkgDateEl.closest('.form-group').innerHTML = `
+                <label>Start Date</label>
+                <div style="padding:12px;background:var(--warning-light,#fff8e1);border:1px solid #ffc107;border-radius:8px;color:#856404;font-size:0.9rem;">
+                    <i class="fas fa-info-circle"></i> 
+                    ${currentLang === 'ar' ? 'لم يحدد المرشد تاريخاً لهذه الباقة بعد' : 'The guide has not set a start date for this package yet'}
+                </div>`;
+        }
+
+        // Cities tags
+        document.getElementById('pkgCitiesTags').innerHTML = (pkg.cities || []).map(c =>
+            `<span class="city-tag"><i class="fas fa-map-pin"></i> ${c.city_name} (${c.days_in_city} days)</span>`
+        ).join('');
+
+        // Meta
+        document.getElementById('pkgMeta').innerHTML = `
+            <span><i class="fas fa-clock"></i> ${pkg.duration_days} Days (fixed, cannot be extended)</span>
+            <span><i class="fas fa-bus"></i> Transportation included</span>
+            <span><i class="fas fa-users"></i> Max ${pkg.max_tourists} tourists</span>
+        `;
+
+        // Images
+        const images = pkg.images || [];
+        if (images.length) {
+            document.getElementById('pkgImagesCard').style.display = 'block';
+            document.getElementById('pkgImages').innerHTML = images.map(img =>
+                `<div style="width:200px;height:140px;border-radius:10px;background:url('${img.image_url}') center/cover;flex-shrink:0;"></div>`
+            ).join('');
+        }
+
+        // Itinerary
+        const itin = pkg.itinerary || [];
+        document.getElementById('pkgItinerary').innerHTML = itin.length ? itin.map(item => `
+            <div class="itinerary-item">
+                <div class="itinerary-day">
+                    <span>Day</span>
+                    <strong>${item.day_number}</strong>
+                </div>
+                <div class="itinerary-content">
+                    <h4>${item.title} ${item.city_name ? '<span style="color:var(--text-light); font-size:0.8rem;">(' + item.city_name + ')</span>' : ''}</h4>
+                    <p>${item.description || ''}</p>
+                </div>
+            </div>
+        `).join('') : '<p style="color:var(--text-light);">Itinerary details coming soon.</p>';
+
+        // Guide
+        document.getElementById('pkgGuideName').textContent = pkg.guide_name || 'Guide';
+        document.getElementById('pkgGuideAvatar').textContent = (pkg.guide_name || 'G').charAt(0);
+        document.getElementById('pkgGuideInfo').textContent = `${pkg.guide_city || ''} ${pkg.guide_email ? '| ' + pkg.guide_email : ''}`;
+
+        recalcPackagePrice();
+    }
+
+    function backToPackages() {
+        document.getElementById('packageList').style.display = 'block';
+        document.getElementById('packageDetail').style.display = 'none';
+        selectedPackage = null;
+    }
+
+    function recalcPackagePrice() {
+        if (!selectedPackage) return;
+        const pkg = selectedPackage;
+        const numPeople = parseInt(document.getElementById('pkgNumPeople').value) || 1;
+        const accm = document.getElementById('pkg_accommodation').checked;
+        const bkf = document.getElementById('pkg_breakfast').checked;
+        const lnch = document.getElementById('pkg_lunch').checked;
+        const dnr = document.getElementById('pkg_dinner').checked;
+
+        let total = parseFloat(pkg.base_price);
+        let breakdown = [{ label: 'Package base price', amount: total }];
+
+        // Calculate add-on costs from city pricing
+        const cities = pkg.cities || [];
+        const cityPrices = pkg.city_prices || [];
+
+        cities.forEach(c => {
+            const cp = cityPrices.find(p => p.city_name === c.city_name) || cityPricing[c.city_name];
+            if (!cp) return;
+            const days = parseInt(c.days_in_city);
+            const nights = Math.max(0, days - 1);
+
+            if (accm && nights > 0) {
+                const acc = nights * parseFloat(cp.accommodation_per_night);
+                total += acc;
+                breakdown.push({ label: `Hotel in ${c.city_name} (${nights}n)`, amount: acc });
+            }
+            if (bkf) {
+                const m = days * parseFloat(cp.breakfast_price);
+                total += m;
+                breakdown.push({ label: `Breakfast in ${c.city_name}`, amount: m });
+            }
+            if (lnch) {
+                const m = days * parseFloat(cp.lunch_price);
+                total += m;
+                breakdown.push({ label: `Lunch in ${c.city_name}`, amount: m });
+            }
+            if (dnr) {
+                const m = days * parseFloat(cp.dinner_price);
+                total += m;
+                breakdown.push({ label: `Dinner in ${c.city_name}`, amount: m });
+            }
+        });
+
+        const perPerson = total;
+        total = total * numPeople;
+
+        let html = breakdown.map(b => `<div class="price-line"><span>${b.label}</span><span>${b.amount.toFixed(0)} SAR</span></div>`).join('');
+        if (numPeople > 1) {
+            html += `<div class="price-line" style="border-top:1px solid rgba(255,255,255,0.2); padding-top:8px; margin-top:6px;"><span>Per person</span><span>${perPerson.toFixed(0)} SAR</span></div>`;
+            html += `<div class="price-line"><span>x ${numPeople} people</span><span></span></div>`;
+        }
+        document.getElementById('pkgBreakdown').innerHTML = html;
+        document.getElementById('pkgTotalPrice').textContent = total.toFixed(0) + ' SAR';
+
+        currentPriceData = { per_person: perPerson, total_price: total };
+    }
+
+    function submitPackageBooking() {
+        if (!selectedPackage) return;
+
+        const startDate = document.getElementById('pkgStartDate').value;
+        if (!startDate) {
+            showError('pkgError', 'Please select a start date');
+            return;
+        }
+
+        const btn = document.getElementById('pkgSubmitBtn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        btn.disabled = true;
+
+        const data = {
+            package_id: selectedPackage.id,
+            num_people: parseInt(document.getElementById('pkgNumPeople').value),
+            notes: document.getElementById('pkgNotes').value,
+            include_accommodation: document.getElementById('pkg_accommodation').checked ? 1 : 0,
+            include_breakfast: document.getElementById('pkg_breakfast').checked ? 1 : 0,
+            include_lunch: document.getElementById('pkg_lunch').checked ? 1 : 0,
+            include_dinner: document.getElementById('pkg_dinner').checked ? 1 : 0,
+            start_date: startDate,
+            total_price: currentPriceData.total_price
+        };
+
+        fetch('php/bookings.php?action=create_package_booking', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                document.getElementById('pkgSuccess').classList.add('show');
+                btn.style.display = 'none';
+            } else {
+                showError('pkgError', res.message);
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Package Booking';
+                btn.disabled = false;
+            }
+        })
+        .catch(() => {
+            showError('pkgError', 'Connection error. Please try again.');
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Package Booking';
+            btn.disabled = false;
+        });
+    }
+
+    function showError(id, msg) {
+        const el = document.getElementById(id);
+        el.textContent = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 5000);
+    }
+
+    function renderPackagesOffline() {
+        const grid = document.getElementById('packageGrid');
+        grid.innerHTML = `
+            <div style="grid-column:1/-1; text-align:center; padding:60px 20px;">
+                <i class="fas fa-exclamation-circle" style="font-size:3rem; color:var(--gray-300); margin-bottom:16px;"></i>
+                <h3 style="color:var(--text-light); margin-bottom:8px;">Could not load packages</h3>
+                <p style="color:var(--text-light); font-size:0.9rem; margin-bottom:20px;">Please make sure you are logged in and try again.</p>
+                <button class="btn btn-outline-primary" onclick="loadPackages()">
+                    <i class="fas fa-redo"></i> Retry
+                </button>
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - STMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="auth-page">
+    <!-- Left Image Side -->
+    <div class="auth-image">
+        <div class="auth-image-bg" style="background-image: url('https://images.unsplash.com/photo-1578895101408-1a36b834405b?w=1200')"></div>
+        <div class="auth-image-overlay"></div>
+        <div class="auth-image-text">
+            <h2 data-i18n="reg_join">Join Our Community</h2>
+            <p data-i18n="reg_join_desc">Create an account to start booking amazing trips across Saudi Arabia, or register as a guide to share your expertise with travelers from around the world.</p>
+            <div style="margin-top:24px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; opacity:0.9;">
+                    <i class="fas fa-check-circle" style="color:var(--gold);"></i>
+                    <span data-i18n="reg_feat1">Access to hundreds of curated trips</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; opacity:0.9;">
+                    <i class="fas fa-check-circle" style="color:var(--gold);"></i>
+                    <span data-i18n="reg_feat2">Connect with certified local guides</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; opacity:0.9;">
+                    <i class="fas fa-check-circle" style="color:var(--gold);"></i>
+                    <span data-i18n="reg_feat3">Secure booking and payment system</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; opacity:0.9;">
+                    <i class="fas fa-check-circle" style="color:var(--gold);"></i>
+                    <span data-i18n="reg_feat4">Rate and review your experiences</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Form Side -->
+    <div class="auth-form-side">
+        <div class="auth-form-container">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <a href="index.html" class="nav-logo">
+                    <div class="logo-icon"><i class="fas fa-kaaba"></i></div>
+                    STMS
+                </a>
+                <button class="lang-switch" onclick="toggleLang()">العربية</button>
+            </div>
+
+            <h1 data-i18n="reg_title">Create Account</h1>
+            <p class="subtitle" data-i18n="reg_subtitle">Join STMS and start your Saudi adventure</p>
+
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label data-i18n="reg_name">Full Name</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-user"></i>
+                        <input type="text" class="form-control" id="regName" required placeholder="Enter your full name" data-i18n-ph="reg_name_ph" oninput="this.value = this.value.replace(/[^A-Za-z\u0600-\u06FF\s]/g, '')" pattern="[A-Za-z\u0600-\u06FF\s]+" title="Name must contain letters only, no numbers or symbols">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="reg_email">Email Address</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" class="form-control" id="regEmail" required placeholder="Enter your email" data-i18n-ph="reg_email_ph">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="reg_phone">Phone Number</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" class="form-control" id="regPhone" placeholder="+966 5XX XXX XXXX" oninput="this.value = this.value.replace(/[^0-9+]/g, '').slice(0, 15)" pattern="[\+]?[0-9]{7,15}" title="Phone number must contain numbers only, max 15 digits">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="reg_password">Password</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="regPassword" required placeholder="Min 6 characters" data-i18n-ph="reg_pass_ph">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="reg_confirm">Confirm Password</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="regConfirm" required placeholder="Confirm password" data-i18n-ph="reg_confirm_ph">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="reg_join_as">I want to join as</label>
+                    <div class="role-tabs">
+                        <button type="button" class="role-tab active" onclick="selectRegRole('tourist', this)">
+                            <i class="fas fa-user"></i> <span data-i18n="reg_tourist">Tourist</span>
+                        </button>
+                        <button type="button" class="role-tab" onclick="selectRegRole('guide', this)">
+                            <i class="fas fa-map-marked-alt"></i> <span data-i18n="reg_guide">Guide</span>
+                        </button>
+                    </div>
+                    <input type="hidden" id="regRole" value="tourist">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><span data-i18n="reg_city">City</span> <span style="color:var(--text-light);font-size:0.8rem;" data-i18n="reg_optional">(Optional)</span></label>
+                        <select class="form-control" id="regCity">
+                            <option value="">Select City</option>
+                            <option value="Riyadh">Riyadh</option>
+                            <option value="Jeddah">Jeddah</option>
+                            <option value="Makkah">Makkah</option>
+                            <option value="Madinah">Madinah</option>
+                            <option value="Dammam">Dammam</option>
+                            <option value="Abha">Abha</option>
+                            <option value="Tabuk">Tabuk</option>
+                            <option value="AlUla">AlUla</option>
+                            <option value="Taif">Taif</option>
+                            <option value="Yanbu">Yanbu</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="reg_region">Region</span> <span style="color:var(--text-light);font-size:0.8rem;" data-i18n="reg_optional">(Optional)</span></label>
+                        <select class="form-control" id="regRegion">
+                            <option value="">Select Region</option>
+                            <option value="Central">Central</option>
+                            <option value="Western">Western</option>
+                            <option value="Eastern">Eastern</option>
+                            <option value="Southern">Southern</option>
+                            <option value="Northern">Northern</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-error" id="regError" style="text-align:center; margin-bottom:16px;"></div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="regBtn">
+                    <i class="fas fa-user-plus"></i> <span data-i18n="reg_btn">Register</span>
+                </button>
+            </form>
+
+            <div class="form-footer">
+                <p><span data-i18n="reg_has_account">Already have an account?</span> <a href="login.html" data-i18n="reg_back_login">Back to Login</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+    function selectRegRole(role, el) {
+        document.getElementById('regRole').value = role;
+        document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function handleRegister(e) {
+        e.preventDefault();
+        const errorEl = document.getElementById('regError');
+        const btn = document.getElementById('regBtn');
+        errorEl.classList.remove('show');
+
+        const data = {
+            full_name: document.getElementById('regName').value.trim(),
+            email: document.getElementById('regEmail').value.trim(),
+            phone: document.getElementById('regPhone').value.trim(),
+            password: document.getElementById('regPassword').value,
+            confirm_password: document.getElementById('regConfirm').value,
+            role: document.getElementById('regRole').value,
+            city: document.getElementById('regCity').value,
+            region: document.getElementById('regRegion').value
+        };
+
+        // Validate name: letters only
+        if (!/^[A-Za-z؀-ۿ\s]+$/.test(data.full_name)) {
+            errorEl.textContent = t('err_name_letters');
+            errorEl.classList.add('show');
+            return;
+        }
+
+        // Validate phone: numbers only
+        if (data.phone && !/^[\+]?[0-9\s\-]{7,15}$/.test(data.phone)) {
+            errorEl.textContent = t('err_phone_numbers');
+            errorEl.classList.add('show');
+            return;
+        }
+
+        if (!data.full_name || !data.email || !data.password) {
+            errorEl.textContent = t('err_fill_required');
+            errorEl.classList.add('show');
+            return;
+        }
+
+        if (data.password.length < 6) {
+            errorEl.textContent = t('err_pass_length');
+            errorEl.classList.add('show');
+            return;
+        }
+
+        if (data.password !== data.confirm_password) {
+            errorEl.textContent = t('err_pass_match');
+            errorEl.classList.add('show');
+            return;
+        }
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + t('reg_creating');
+        btn.disabled = true;
+
+        fetch('php/auth.php?action=register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                alert(t('err_reg_success'));
+                window.location.href = 'login.html';
+            } else {
+                errorEl.textContent = res.message;
+                errorEl.classList.add('show');
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> ' + t('reg_btn');
+                btn.disabled = false;
+            }
+        })
+        .catch(() => {
+            errorEl.textContent = t('err_connection');
+            errorEl.classList.add('show');
+            btn.innerHTML = '<i class="fas fa-user-plus"></i> ' + t('reg_btn');
+            btn.disabled = false;
+        });
+    }
+</script>
+</body>
+</html>

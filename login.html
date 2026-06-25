@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - STMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="auth-page">
+    <!-- Left Image Side -->
+    <div class="auth-image">
+        <div class="auth-image-bg" style="background-image: url('https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?w=1200')"></div>
+        <div class="auth-image-overlay"></div>
+        <div class="auth-image-text">
+            <h2 data-i18n="login_explore">Explore Saudi Arabia</h2>
+            <p data-i18n="login_explore_desc">Login to access your personalized dashboard, manage bookings, and discover amazing trips across the Kingdom.</p>
+        </div>
+    </div>
+
+    <!-- Right Form Side -->
+    <div class="auth-form-side">
+        <div class="auth-form-container">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <a href="index.html" class="nav-logo">
+                    <div class="logo-icon"><i class="fas fa-kaaba"></i></div>
+                    STMS
+                </a>
+                <button class="lang-switch" onclick="toggleLang()">العربية</button>
+            </div>
+
+            <h1 data-i18n="login_welcome">Welcome Back</h1>
+            <p class="subtitle" data-i18n="login_subtitle">Sign in to your account to continue</p>
+
+            <!-- Role Tabs -->
+            <div class="role-tabs">
+                <button class="role-tab active" data-role="tourist" onclick="selectRole('tourist', this)">
+                    <i class="fas fa-user"></i> <span data-i18n="login_tourist">Tourist</span>
+                </button>
+                <button class="role-tab" data-role="guide" onclick="selectRole('guide', this)">
+                    <i class="fas fa-map-marked-alt"></i> <span data-i18n="login_guide">Guide</span>
+                </button>
+                <button class="role-tab" data-role="admin" onclick="selectRole('admin', this)">
+                    <i class="fas fa-shield-alt"></i> <span data-i18n="login_admin">Admin</span>
+                </button>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <input type="hidden" id="loginRole" value="tourist">
+
+                <div class="form-group">
+                    <label data-i18n="login_email">Email Address</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" class="form-control" id="loginEmail" required placeholder="Enter your email" data-i18n-ph="login_email_ph">
+                    </div>
+                    <div class="form-error" id="emailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="login_password">Password</label>
+                    <div class="input-icon-wrap">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-control" id="loginPassword" required placeholder="Enter your password" data-i18n-ph="login_pass_ph">
+                    </div>
+                    <div class="form-error" id="passwordError"></div>
+                </div>
+
+                <div class="form-error" id="loginError" style="text-align:center; margin-bottom:16px;"></div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> <span data-i18n="login_btn">Login</span>
+                </button>
+            </form>
+
+            <div class="form-footer" id="registerLink">
+                <p><span data-i18n="login_no_account">Don't have an account?</span> <a href="register.html" data-i18n="login_create">Create new account</a></p>
+            </div>
+
+            <div class="form-divider" data-i18n="login_or">or</div>
+
+            <a href="index.html" class="btn btn-outline-primary btn-block" style="justify-content:center;">
+                <i class="fas fa-home"></i> <span data-i18n="login_back_home">Back to Home</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+    let selectedRole = 'tourist';
+
+    function selectRole(role, el) {
+        selectedRole = role;
+        document.getElementById('loginRole').value = role;
+        document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+
+        // Hide register link for admin
+        const regLink = document.getElementById('registerLink');
+        if (role === 'admin') {
+            regLink.style.display = 'none';
+        } else {
+            regLink.style.display = 'block';
+        }
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const role = document.getElementById('loginRole').value;
+        const errorEl = document.getElementById('loginError');
+        const btn = document.getElementById('loginBtn');
+
+        errorEl.classList.remove('show');
+        errorEl.textContent = '';
+
+        if (!email || !password) {
+            errorEl.textContent = t('err_fill_fields');
+            errorEl.classList.add('show');
+            return;
+        }
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + t('login_logging_in');
+        btn.disabled = true;
+
+        fetch('php/auth.php?action=login', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, role })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const user = data.user;
+                localStorage.setItem('stms_user', JSON.stringify(user));
+
+                if (user.role === 'tourist') {
+                    window.location.href = 'book.html';
+                } else if (user.role === 'guide') {
+                    window.location.href = 'guide-dashboard.html';
+                } else if (user.role === 'admin') {
+                    window.location.href = 'admin-dashboard.html';
+                }
+            } else {
+                errorEl.textContent = data.message;
+                errorEl.classList.add('show');
+                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> ' + t('login_btn');
+                btn.disabled = false;
+            }
+        })
+        .catch(() => {
+            errorEl.textContent = t('err_connection');
+            errorEl.classList.add('show');
+            btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> ' + t('login_btn');
+            btn.disabled = false;
+        });
+    }
+</script>
+</body>
+</html>

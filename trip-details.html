@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Details - STMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar scrolled" id="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-logo" style="color:var(--primary);">
+            <div class="logo-icon"><i class="fas fa-kaaba"></i></div>
+            STMS
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="trips.html" style="color:var(--text);" data-i18n="nav_browse">Browse Trips</a>
+            <a href="index.html#about" style="color:var(--text);" data-i18n="nav_about">About</a>
+            <a href="index.html#contact" style="color:var(--text);" data-i18n="nav_contact">Contact</a>
+        </div>
+        <div class="nav-right">
+            <button class="lang-switch" onclick="toggleLang()">العربية</button>
+            <a href="trips.html" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-arrow-left"></i> <span data-i18n="nav_back_trips">Back to Trips</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Trip Hero -->
+<div class="trip-hero" id="tripHero" style="margin-top:70px;">
+    <div class="trip-hero-overlay">
+        <div class="trip-hero-text">
+            <h1 id="tripTitle">Loading...</h1>
+            <div class="trip-hero-meta" id="tripHeroMeta"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Trip Detail Content -->
+<div class="container">
+    <div class="trip-detail-grid">
+        <!-- Left Column - Details -->
+        <div>
+            <!-- Description -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fas fa-info-circle" style="color:var(--primary); margin-right:8px;"></i> <span data-i18n="td_about">About This Trip</span></h3>
+                </div>
+                <div class="card-body">
+                    <p id="tripDescription" style="line-height:1.8; color:var(--text);"></p>
+                </div>
+            </div>
+
+            <!-- Itinerary -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fas fa-route" style="color:var(--gold-dark); margin-right:8px;"></i> <span data-i18n="td_itinerary">Itinerary</span></h3>
+                </div>
+                <div class="card-body" id="itineraryContainer"></div>
+            </div>
+
+            <!-- Guide Info -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fas fa-user-tie" style="color:var(--info); margin-right:8px;"></i> <span data-i18n="td_guide">Your Guide</span></h3>
+                </div>
+                <div class="card-body">
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <div class="profile-avatar" style="width:64px;height:64px;font-size:1.4rem;border-radius:50%;background:rgba(0,108,53,0.1);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;" id="guideAvatar">G</div>
+                        <div>
+                            <h4 id="guideName" style="color:var(--dark); margin-bottom:2px;"></h4>
+                            <p id="guideInfo" style="color:var(--text-light); font-size:0.9rem;"></p>
+                            <div id="guideRating" style="color:var(--gold); font-size:0.85rem; margin-top:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fas fa-star" style="color:var(--gold); margin-right:8px;"></i> <span data-i18n="td_reviews">Reviews</span></h3>
+                    <span id="reviewCount" style="color:var(--text-light); font-size:0.85rem;"></span>
+                </div>
+                <div class="card-body" id="reviewsContainer">
+                    <p style="color:var(--text-light);">No reviews yet.</p>
+                </div>
+
+                <!-- Write a Review Form -->
+                <div id="writeReviewSection" style="display:none; padding:20px; border-top:1px solid var(--gray-100);">
+                    <h4 style="margin-bottom:16px;" data-i18n="bk_review_title">Rate This Trip</h4>
+                    <div style="margin-bottom:12px;">
+                        <div style="display:flex; gap:8px; font-size:1.8rem; margin-bottom:8px;" id="starRating">
+                            <span class="star-btn" data-val="1" onclick="setRating(1)" style="cursor:pointer; color:var(--gray-300);">★</span>
+                            <span class="star-btn" data-val="2" onclick="setRating(2)" style="cursor:pointer; color:var(--gray-300);">★</span>
+                            <span class="star-btn" data-val="3" onclick="setRating(3)" style="cursor:pointer; color:var(--gray-300);">★</span>
+                            <span class="star-btn" data-val="4" onclick="setRating(4)" style="cursor:pointer; color:var(--gray-300);">★</span>
+                            <span class="star-btn" data-val="5" onclick="setRating(5)" style="cursor:pointer; color:var(--gray-300);">★</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="bk_review_comment">Your Comment (Optional)</label>
+                        <textarea class="form-control" id="reviewComment" rows="3" placeholder="Share your experience..."></textarea>
+                    </div>
+                    <div class="form-error" id="reviewError"></div>
+                    <div class="form-success" id="reviewSuccess" style="display:none; color:var(--primary); padding:8px;"></div>
+                    <button class="btn btn-primary" onclick="submitReview()">
+                        <i class="fas fa-star"></i> <span data-i18n="bk_review_submit">Submit Review</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Booking Widget -->
+        <div>
+            <div class="booking-widget">
+                <div class="booking-price" id="tripPrice">--</div>
+                <p style="color:var(--text-light); font-size:0.85rem; margin-bottom:20px;" data-i18n="td_per_person">per person</p>
+
+                <div style="display:flex; gap:12px; margin-bottom:20px;">
+                    <div style="flex:1; background:var(--gray-50); border-radius:10px; padding:12px; text-align:center;">
+                        <div style="font-size:0.75rem; color:var(--text-light); text-transform:uppercase;" data-i18n="td_duration">Duration</div>
+                        <strong id="tripDuration" style="color:var(--dark);">--</strong>
+                    </div>
+                    <div style="flex:1; background:var(--gray-50); border-radius:10px; padding:12px; text-align:center;">
+                        <div style="font-size:0.75rem; color:var(--text-light); text-transform:uppercase;" data-i18n="td_spots">Spots Left</div>
+                        <strong id="tripSpots" style="color:var(--primary);">--</strong>
+                    </div>
+                </div>
+
+                <h3 data-i18n="td_book">Book This Trip</h3>
+
+                <form id="bookingForm" onsubmit="handleBooking(event)">
+                    <div class="form-group">
+                        <label data-i18n="td_select_date">Trip Date</label>
+                        <input type="date" class="form-control" id="bookDate" required readonly style="background:var(--gray-50); cursor:not-allowed; color:var(--text-light);">
+                        <small style="color:var(--text-light); font-size:0.78rem;"><i class="fas fa-lock" style="margin-right:4px;"></i>Fixed by the guide – cannot be changed</small>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="td_num_people">Number of People</label>
+                        <select class="form-control" id="bookPeople">
+                            <option value="1">1 Person</option>
+                            <option value="2">2 People</option>
+                            <option value="3">3 People</option>
+                            <option value="4">4 People</option>
+                            <option value="5">5 People</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="td_notes">Special Notes</span> <span style="color:var(--text-light);font-size:0.8rem;" data-i18n="td_notes_opt">(Optional)</span></label>
+                        <textarea class="form-control" id="bookNotes" rows="2" placeholder="Any special requests..." data-i18n-ph="td_notes_ph"></textarea>
+                    </div>
+
+                    <div style="background:var(--gray-50); border-radius:10px; padding:14px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom:6px;">
+                            <span style="color:var(--text-light);">Price x <span id="calcPeople">1</span></span>
+                            <strong id="calcTotal" style="color:var(--dark);">--</strong>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="bookBtn">
+                        <i class="fas fa-check-circle"></i> <span data-i18n="td_book_btn">Book Trip</span>
+                    </button>
+                </form>
+
+                <div class="success-message mt-2" id="bookingSuccess">
+                    <i class="fas fa-check-circle"></i>
+                    <h4 data-i18n="td_booked_title">Booking Confirmed!</h4>
+                    <p data-i18n="td_booked_desc">Your booking has been confirmed! You can view it in My Bookings. Note: Cancellation is free up to 24 hours before the trip.</p>
+                </div>
+
+                <div class="form-error mt-2" id="bookingError" style="text-align:center;"></div>
+
+                <div id="loginPrompt" style="display:none; text-align:center; padding:20px 0;">
+                    <p style="color:var(--text-light); margin-bottom:12px;" data-i18n="td_login_prompt">Please login to book this trip</p>
+                    <a href="login.html" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> <span data-i18n="td_login_btn">Login to Book</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom" style="border:none; padding:0;">
+            <span data-i18n="footer_copy">&copy; 2026 STMS - Saudi Trip Management System. All rights reserved.</span>
+        </div>
+    </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const tripId = urlParams.get('id') || 1;
+    let tripData = null;
+
+    // Check auth
+    checkAuth().then(user => {
+        if (!user) {
+            document.getElementById('bookingForm').style.display = 'none';
+            document.getElementById('loginPrompt').style.display = 'block';
+        }
+    });
+
+    // Load trip
+    loadTripDetails();
+
+    function loadTripDetails() {
+        fetch(`php/trips.php?action=get&id=${tripId}`, { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    tripData = data.trip;
+                    renderTrip(tripData);
+                } else {
+                    renderOfflineTrip();
+                }
+            })
+            .catch(() => renderOfflineTrip());
+    }
+
+    function renderTrip(trip) {
+        document.title = trip.title + ' - STMS';
+
+        const heroEl = document.getElementById('tripHero');
+        if (trip.cover_image) {
+            heroEl.style.backgroundImage = `url('${trip.cover_image}')`;
+            heroEl.style.backgroundSize = 'cover';
+            heroEl.style.backgroundPosition = 'center';
+        } else {
+            heroEl.style.background = 'linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%)';
+            heroEl.style.display = 'flex';
+            heroEl.style.alignItems = 'center';
+            heroEl.style.justifyContent = 'center';
+        }
+        document.getElementById('tripTitle').textContent = trip.title;
+
+        document.getElementById('tripHeroMeta').innerHTML = `
+            <span><i class="fas fa-map-marker-alt"></i> ${trip.location_city}${trip.location_region ? ', ' + trip.location_region : ''}</span>
+            <span><i class="fas fa-calendar"></i> ${formatDate(trip.start_date)} - ${formatDate(trip.end_date)}</span>
+            <span><i class="fas fa-clock"></i> ${trip.duration || ''}</span>
+        `;
+
+        document.getElementById('tripDescription').textContent = trip.description;
+
+        // Itinerary
+        const itin = trip.itinerary || [];
+        document.getElementById('itineraryContainer').innerHTML = itin.length ? itin.map(item => `
+            <div class="itinerary-item">
+                <div class="itinerary-day">
+                    <span>Day</span>
+                    <strong>${item.day}</strong>
+                </div>
+                <div class="itinerary-content">
+                    <h4>${item.title}</h4>
+                    <p>${item.desc}</p>
+                </div>
+            </div>
+        `).join('') : '<p style="color:var(--text-light);">Itinerary details coming soon.</p>';
+
+        // Guide
+        document.getElementById('guideName').textContent = trip.guide_name;
+        document.getElementById('guideAvatar').textContent = trip.guide_name ? trip.guide_name.charAt(0) : 'G';
+        document.getElementById('guideInfo').textContent = `${trip.guide_city || ''} | ${trip.guide_email || ''}`;
+        document.getElementById('guideRating').innerHTML = `${renderStars(trip.avg_rating || 0)} (${trip.review_count || 0} reviews)`;
+
+        // Booking widget
+        const price = parseFloat(trip.price);
+        document.getElementById('tripPrice').innerHTML = `${price.toFixed(0)} <span>SAR</span>`;
+        document.getElementById('tripDuration').textContent = trip.duration || calcDuration(trip.start_date, trip.end_date);
+        const spotsLeft = Math.max(0, trip.max_tourists - (trip.booked_count || 0));
+        document.getElementById('tripSpots').textContent = spotsLeft;
+        document.getElementById('calcTotal').textContent = price.toFixed(0) + ' SAR';
+
+        document.getElementById('bookDate').value = trip.start_date;
+        document.getElementById('bookDate').min = trip.start_date;
+        document.getElementById('bookDate').max = trip.end_date;
+
+        // Price calculator
+        document.getElementById('bookPeople').addEventListener('change', function() {
+            const num = parseInt(this.value);
+            document.getElementById('calcPeople').textContent = num;
+            document.getElementById('calcTotal').textContent = (price * num).toFixed(0) + ' SAR';
+        });
+
+        // Reviews
+        if (trip.reviews && trip.reviews.length) {
+            document.getElementById('reviewCount').textContent = trip.reviews.length + ' reviews';
+            document.getElementById('reviewsContainer').innerHTML = trip.reviews.map(r => `
+                <div class="review-card" style="box-shadow:none; border:1px solid var(--gray-100); margin-bottom:12px;">
+                    <div class="review-header">
+                        <div class="review-avatar">${r.reviewer_name.charAt(0)}</div>
+                        <div class="review-info">
+                            <div class="name">${r.reviewer_name}</div>
+                            <div class="date">${formatDate(r.created_at)}</div>
+                        </div>
+                    </div>
+                    <div class="review-stars">${renderStars(r.rating)}</div>
+                    <div class="review-text">${r.comment}</div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function handleBooking(e) {
+        e.preventDefault();
+        const btn = document.getElementById('bookBtn');
+        const errorEl = document.getElementById('bookingError');
+        errorEl.classList.remove('show');
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        btn.disabled = true;
+
+        const data = {
+            trip_id: parseInt(tripId),
+            num_people: parseInt(document.getElementById('bookPeople').value),
+            notes: document.getElementById('bookNotes').value
+        };
+
+        fetch('php/bookings.php?action=create', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                document.getElementById('bookingForm').style.display = 'none';
+                document.getElementById('bookingSuccess').classList.add('show');
+            } else {
+                errorEl.textContent = res.message;
+                errorEl.classList.add('show');
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Book Trip';
+                btn.disabled = false;
+            }
+        })
+        .catch(() => {
+            errorEl.textContent = t('err_connection');
+            errorEl.classList.add('show');
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> Book Trip';
+            btn.disabled = false;
+        });
+    }
+
+    function renderOfflineTrip() {
+        const trip = {
+            id: 1, title: 'Desert Safari Adventure in Red Sand Dunes',
+            description: 'Experience the breathtaking beauty of Saudi Arabia\'s vast desert landscapes. Ride camels across golden dunes, enjoy traditional Bedouin hospitality, and witness a spectacular desert sunset.',
+            location_city: 'Riyadh', location_region: 'Central',
+            cover_image: 'https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?w=1600',
+            price: 450, max_tourists: 15, start_date: '2026-03-15', end_date: '2026-03-17',
+            duration: '3 Days', guide_name: 'Ahmed Al-Rashid', guide_city: 'Jeddah',
+            guide_email: 'ahmed@stms.sa', avg_rating: 4.8, review_count: 12, booked_count: 3,
+            itinerary: [
+                {day:1, title:'Arrival & Desert Camp', desc:'Meet at Riyadh, drive to desert camp, camel rides and dune bashing'},
+                {day:2, title:'Full Desert Exploration', desc:'Sunrise photography, sandboarding, traditional lunch, stargazing'},
+                {day:3, title:'Farewell & Return', desc:'Morning yoga, breakfast, return to Riyadh'}
+            ],
+            reviews: [
+                {reviewer_name:'Sarah Johnson', rating:5, comment:'Absolutely magical experience!', created_at:'2026-01-15'},
+                {reviewer_name:'Emily Chen', rating:4, comment:'Wonderful tour through history.', created_at:'2026-01-20'}
+            ]
+        };
+        tripData = trip;
+        renderTrip(trip);
+    }
+</script>
+</body>
+</html>
+<script>
+    // Review functionality
+    let selectedRating = 0;
+
+    function setRating(val) {
+        selectedRating = val;
+        document.querySelectorAll('.star-btn').forEach(s => {
+            s.style.color = parseInt(s.dataset.val) <= val ? 'var(--gold)' : 'var(--gray-300)';
+        });
+    }
+
+    function submitReview() {
+        const user = JSON.parse(localStorage.getItem('stms_user') || '{}');
+        if (!user || user.role !== 'tourist') {
+            document.getElementById('reviewError').textContent = typeof currentLang !== 'undefined' && currentLang === 'ar' ? 'يجب تسجيل الدخول كسائح' : 'You must be logged in as a tourist';
+            document.getElementById('reviewError').classList.add('show');
+            return;
+        }
+        if (!selectedRating) {
+            document.getElementById('reviewError').textContent = typeof currentLang !== 'undefined' && currentLang === 'ar' ? 'يرجى اختيار تقييم' : 'Please select a rating';
+            document.getElementById('reviewError').classList.add('show');
+            return;
+        }
+        const tripId = new URLSearchParams(window.location.search).get('id');
+        const comment = document.getElementById('reviewComment').value;
+        const lang = typeof currentLang !== 'undefined' ? currentLang : 'en';
+
+        fetch('php/reviews.php?action=create', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ trip_id: parseInt(tripId), rating: selectedRating, comment, lang })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('reviewError').classList.remove('show');
+                const successEl = document.getElementById('reviewSuccess');
+                successEl.textContent = data.message || (lang === 'ar' ? 'تم إرسال تقييمك بنجاح!' : 'Review submitted successfully!');
+                successEl.style.display = 'block';
+                document.getElementById('writeReviewSection').style.display = 'none';
+            } else {
+                document.getElementById('reviewError').textContent = data.message;
+                document.getElementById('reviewError').classList.add('show');
+            }
+        })
+        .catch(() => {
+            document.getElementById('reviewError').textContent = lang === 'ar' ? 'خطأ في الاتصال' : 'Connection error';
+            document.getElementById('reviewError').classList.add('show');
+        });
+    }
+
+    // Show review form for tourists
+    const currentUser = JSON.parse(localStorage.getItem('stms_user') || '{}');
+    if (currentUser && currentUser.role === 'tourist') {
+        const sec = document.getElementById('writeReviewSection');
+        if (sec) sec.style.display = 'block';
+    }
+</script>

@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - STMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="index.html" class="sidebar-logo">
+            <div class="logo-icon"><i class="fas fa-kaaba"></i></div>
+            STMS
+        </a>
+        <button class="lang-switch" onclick="toggleLang()" style="margin:0 16px 10px;">العربية</button>
+        <div class="sidebar-menu">
+            <div class="sidebar-label" data-i18n="ad_panel">Admin Panel</div>
+            <a href="#" class="sidebar-link active" onclick="showSection('overview')">
+                <i class="fas fa-tachometer-alt"></i> <span data-i18n="ad_dashboard">Dashboard</span>
+            </a>
+            <a href="#" class="sidebar-link" onclick="showSection('users')">
+                <i class="fas fa-users"></i> <span data-i18n="ad_users">Manage Users</span>
+            </a>
+            <a href="#" class="sidebar-link" onclick="showSection('trips')">
+                <i class="fas fa-map"></i> <span data-i18n="ad_trips">Manage Trips</span>
+            </a>
+            <a href="#" class="sidebar-link" onclick="showSection('bookings')">
+                <i class="fas fa-ticket-alt"></i> <span data-i18n="ad_bookings">Bookings</span>
+            </a>
+            <a href="#" class="sidebar-link" onclick="showSection('reviews')">
+                <i class="fas fa-star"></i> <span data-i18n="ad_reviews">Reviews & Feedback</span>
+            </a>
+            <a href="#" class="sidebar-link" onclick="showSection('faqs')">
+                <i class="fas fa-question-circle"></i> <span data-i18n="ad_faqs">System FAQs</span>
+            </a>
+            <div class="sidebar-label" data-i18n="gd_account">Account</div>
+            <a href="profile.html" class="sidebar-link">
+                <i class="fas fa-user-circle"></i> <span data-i18n="gd_profile">Profile</span>
+            </a>
+            <a href="index.html" class="sidebar-link">
+                <i class="fas fa-home"></i> <span data-i18n="gd_home">Home</span>
+            </a>
+            <a href="#" class="sidebar-link" onclick="handleLogout()">
+                <i class="fas fa-sign-out-alt"></i> <span data-i18n="gd_logout">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <button class="mobile-toggle" onclick="toggleSidebar()" style="display:none; margin-bottom:10px;">
+                    <i class="fas fa-bars" style="color:var(--dark);"></i>
+                </button>
+                <h1 id="pageTitle"><span data-i18n="ad_overview">Dashboard Overview</span></h1>
+                <p id="pageSubtitle">System statistics and management</p>
+            </div>
+            <div>
+                <span style="color:var(--text-light); font-size:0.9rem;">Admin: </span>
+                <strong id="adminName" style="color:var(--dark);">Admin</strong>
+            </div>
+        </div>
+
+        <!-- ===== Overview Section ===== -->
+        <div id="overviewSection">
+            <div class="stat-cards">
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="fas fa-users"></i></div>
+                    <div class="stat-info">
+                        <h3 id="statUsers">0</h3>
+                        <p data-i18n="ad_total_users">Total Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon gold"><i class="fas fa-map"></i></div>
+                    <div class="stat-info">
+                        <h3 id="statTrips">0</h3>
+                        <p data-i18n="ad_total_trips">Total Trips</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fas fa-clock"></i></div>
+                    <div class="stat-info">
+                        <h3 id="statPending">0</h3>
+                        <p data-i18n="ad_total_bookings">Pending Bookings</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red"><i class="fas fa-comment-dots"></i></div>
+                    <div class="stat-info">
+                        <h3 id="statFeedback">0</h3>
+                        <p data-i18n="ad_feedback">New Feedback</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>User Breakdown</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:flex; gap:30px; justify-content:center; padding:20px 0;">
+                            <div style="text-align:center;">
+                                <div style="width:80px;height:80px;border-radius:50%;background:rgba(0,108,53,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:1.5rem;color:var(--primary);">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h3 id="statTourists" style="color:var(--dark);">0</h3>
+                                <p style="color:var(--text-light); font-size:0.85rem;">Tourists</p>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="width:80px;height:80px;border-radius:50%;background:rgba(200,169,81,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:1.5rem;color:var(--gold-dark);">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </div>
+                                <h3 id="statGuides" style="color:var(--dark);">0</h3>
+                                <p style="color:var(--text-light); font-size:0.85rem;">Guides</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <button class="btn btn-primary btn-block" onclick="showSection('users')" style="justify-content:center;">
+                                <i class="fas fa-users-cog"></i> Manage Users
+                            </button>
+                            <button class="btn btn-gold btn-block" onclick="showSection('trips')" style="justify-content:center;">
+                                <i class="fas fa-map"></i> Manage Trips
+                            </button>
+                            <button class="btn btn-outline-primary btn-block" onclick="showSection('reviews')" style="justify-content:center;">
+                                <i class="fas fa-star"></i> View Reviews
+                            </button>
+                            <button class="btn btn-outline-primary btn-block" onclick="showSection('faqs')" style="justify-content:center;">
+                                <i class="fas fa-question-circle"></i> Manage FAQs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Users Section ===== -->
+        <div id="usersSection" style="display:none;">
+            <div class="filters-bar" style="margin-bottom:20px;">
+                <div class="filter-group" style="min-width:auto;">
+                    <label data-i18n="ad_filter_role">Filter by Role</label>
+                    <select class="form-control" id="userRoleFilter" onchange="loadUsers()">
+                        <option value="">All Users</option>
+                        <option value="tourist">Tourists</option>
+                        <option value="guide">Guides</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th data-i18n="ad_col_name">Name</th>
+                                <th data-i18n="ad_col_email">Email</th>
+                                <th data-i18n="ad_col_phone">Phone</th>
+                                <th data-i18n="ad_col_role">Role</th>
+                                <th data-i18n="ad_col_city">City</th>
+                                <th data-i18n="ad_col_status">Status</th>
+                                <th data-i18n="ad_col_joined">Joined</th>
+                                <th data-i18n="ad_col_actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="9" style="text-align:center; padding:40px; color:var(--text-light);">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Trips Section ===== -->
+        <div id="tripsSection" style="display:none;">
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th data-i18n="ad_col_type">Type</th>
+                                <th data-i18n="ad_col_title">Title</th>
+                                <th data-i18n="ad_col_guide">Guide</th>
+                                <th data-i18n="ad_col_location">Location</th>
+                                <th data-i18n="ad_col_date">Date</th>
+                                <th data-i18n="ad_col_price">Price</th>
+                                <th data-i18n="ad_col_bookings">Bookings</th>
+                                <th data-i18n="ad_col_status">Status</th>
+                                <th data-i18n="ad_col_actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tripsTableBody">
+                            <tr><td colspan="10" style="text-align:center; padding:40px; color:var(--text-light);">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Bookings Section ===== -->
+        <div id="bookingsSection" style="display:none;">
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th data-i18n="ad_col_title">Trip</th>
+                                <th>Tourist</th>
+                                <th data-i18n="ad_col_guide">Guide</th>
+                                <th>People</th>
+                                <th data-i18n="ad_col_location">Location</th>
+                                <th data-i18n="ad_col_status">Status</th>
+                                <th data-i18n="ad_col_date">Date</th>
+                                <th data-i18n="ad_col_actions">Actions</th>
+                                <th data-i18n="ad_col_delete">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingsTableBody">
+                            <tr><td colspan="7" style="text-align:center; padding:40px; color:var(--text-light);">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Reviews Section ===== -->
+        <div id="reviewsSection" style="display:none;">
+            <div class="card mb-3">
+                <div class="card-header"><h3>User Reviews</h3></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Trip</th>
+                                <th>Reviewer</th>
+                                <th>Rating</th>
+                                <th>Comment</th>
+                                <th data-i18n="ad_col_date">Date</th>
+                                <th data-i18n="ad_col_actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reviewsTableBody">
+                            <tr><td colspan="7" style="text-align:center; padding:40px; color:var(--text-light);">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h3>Contact Feedback</h3></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-i18n="ad_col_name">Name</th>
+                                <th data-i18n="ad_col_email">Email</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th data-i18n="ad_col_date">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedbackTableBody">
+                            <tr><td colspan="5" style="text-align:center; padding:40px; color:var(--text-light);">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== FAQs Section ===== -->
+        <div id="faqsSection" style="display:none;">
+            <div style="display:flex; justify-content:flex-end; margin-bottom:20px;">
+                <button class="btn btn-primary" onclick="openFaqModal()">
+                    <i class="fas fa-plus"></i> Add FAQ
+                </button>
+            </div>
+            <div id="faqsList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- FAQ Modal -->
+<div class="modal-overlay" id="faqModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="faqModalTitle">Add FAQ</h3>
+            <button class="modal-close" onclick="closeModal('faqModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="faqForm">
+                <input type="hidden" id="faqId" value="">
+                <div class="form-group">
+                    <label>Question</label>
+                    <input type="text" class="form-control" id="faqQuestion" required placeholder="Enter FAQ question">
+                </div>
+                <div class="form-group">
+                    <label>Answer</label>
+                    <textarea class="form-control" id="faqAnswer" rows="4" required placeholder="Enter FAQ answer"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-primary btn-sm" onclick="closeModal('faqModal')">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="saveFaq()">Save FAQ</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete User Modal -->
+<div class="modal-overlay" id="deleteUserModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Confirm Action</h3>
+            <button class="modal-close" onclick="closeModal('deleteUserModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p id="deleteUserMessage">Are you sure?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-primary btn-sm" onclick="closeModal('deleteUserModal')">Cancel</button>
+            <button class="btn btn-danger btn-sm" id="confirmDeleteUserBtn">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+    // Check auth
+    checkAuth().then(user => {
+        if (!user || user.role !== 'admin') {
+            window.location.href = 'login.html';
+            return;
+        }
+        document.getElementById('adminName').textContent = user.full_name;
+        loadDashboard();
+    });
+
+    // ===== Assign Guide functions (global scope) =====
+    let assignBookingId = null;
+
+    function openAssignGuide(bookingId, touristName) {
+        assignBookingId = bookingId;
+        const isAr = currentLang === 'ar';
+        document.getElementById('assignModalTitle').textContent = isAr ? 'تعيين مرشد للرحلة' : 'Assign Guide to Trip';
+        document.getElementById('assignModalSubtitle').textContent = (isAr ? 'السائح: ' : 'Tourist: ') + touristName;
+        document.getElementById('assignCancelBtn').textContent = isAr ? 'إلغاء' : 'Cancel';
+        document.getElementById('assignConfirmBtn').textContent = isAr ? 'تعيين' : 'Assign';
+        document.getElementById('assignGuideModal').style.display = 'flex';
+
+        const sel = document.getElementById('assignGuideSelect');
+        sel.innerHTML = '<option value="">' + (isAr ? 'جاري التحميل...' : 'Loading...') + '</option>';
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'php/admin.php?action=users&role=guide', true);
+        xhr.withCredentials = true;
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState !== 4) return;
+            let data;
+            try { data = JSON.parse(xhr.responseText); } catch(e) { data = {success:false}; }
+            if (data.success && data.users && data.users.length) {
+                sel.innerHTML = '<option value="">' + (isAr ? 'اختر مرشداً...' : 'Select a guide...') + '</option>' +
+                    data.users.map(g => '<option value="' + g.id + '">' + g.full_name + (g.city ? ' - ' + g.city : '') + '</option>').join('');
+            } else {
+                sel.innerHTML = '<option value="">' + (isAr ? 'لا يوجد مرشدون' : 'No guides found') + '</option>';
+            }
+        };
+        xhr.send();
+    }
+
+    function adminDeleteBooking(bookingId) {
+        const isAr = currentLang === 'ar';
+        if (!confirm(isAr ? 'هل تريد حذف هذا الحجز نهائياً؟' : 'Are you sure you want to permanently delete this booking?')) return;
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'php/bookings.php?action=delete_booking', true);
+        xhr.withCredentials = true;
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState !== 4) return;
+            let data;
+            try { data = JSON.parse(xhr.responseText); } catch(e) { data = {success:false}; }
+            if (data.success) {
+                loadAdminBookings();
+            } else {
+                alert(data.message || 'Error');
+            }
+        };
+        xhr.send(JSON.stringify({ booking_id: bookingId, lang: currentLang }));
+    }
+
+    function closeAssignGuide() {
+        document.getElementById('assignGuideModal').style.display = 'none';
+        assignBookingId = null;
+    }
+
+    function confirmAssignGuide() {
+        const guideId = document.getElementById('assignGuideSelect').value;
+        const isAr = currentLang === 'ar';
+        if (!guideId) { alert(isAr ? 'يرجى اختيار مرشد' : 'Please select a guide'); return; }
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'php/bookings.php?action=assign_guide', true);
+        xhr.withCredentials = true;
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState !== 4) return;
+            let data;
+            try { data = JSON.parse(xhr.responseText); } catch(e) { data = {success:false}; }
+            if (data.success) {
+                closeAssignGuide();
+                alert(data.message || (isAr ? 'تم تعيين المرشد بنجاح' : 'Guide assigned successfully'));
+                loadAdminBookings();
+            } else {
+                alert(data.message || 'Error');
+            }
+        };
+        xhr.send(JSON.stringify({ booking_id: assignBookingId, guide_id: parseInt(guideId), lang: currentLang }));
+    }
+
+    function showSection(section) {
+        ['overviewSection', 'usersSection', 'tripsSection', 'bookingsSection', 'reviewsSection', 'faqsSection'].forEach(s => {
+            document.getElementById(s).style.display = 'none';
+        });
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+
+        const map = {
+            overview: { el: 'overviewSection', idx: 0, title: 'Dashboard Overview', sub: 'System statistics and management' },
+            users: { el: 'usersSection', idx: 1, title: 'Manage Users', sub: 'View and manage tourists and guides' },
+            trips: { el: 'tripsSection', idx: 2, title: 'Manage Trips', sub: 'View and manage all trips' },
+            bookings: { el: 'bookingsSection', idx: 3, title: 'Bookings', sub: 'All system bookings' },
+            reviews: { el: 'reviewsSection', idx: 4, title: 'Reviews & Feedback', sub: 'Manage reviews and contact feedback' },
+            faqs: { el: 'faqsSection', idx: 5, title: 'System FAQs', sub: 'Manage frequently asked questions' }
+        };
+
+        const info = map[section];
+        document.getElementById(info.el).style.display = 'block';
+        document.querySelectorAll('.sidebar-menu .sidebar-link')[info.idx].classList.add('active');
+        document.getElementById('pageTitle').textContent = info.title;
+        document.getElementById('pageSubtitle').textContent = info.sub;
+
+        if (section === 'users') loadUsers();
+        if (section === 'trips') loadAdminTrips();
+        if (section === 'bookings') loadAdminBookings();
+        if (section === 'reviews') { loadAdminReviews(); loadAdminFeedback(); }
+        if (section === 'faqs') loadAdminFaqs();
+    }
+
+    function loadDashboard() {
+        fetch('php/admin.php?action=dashboard', { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const s = data.stats;
+                    document.getElementById('statUsers').textContent = s.total_users;
+                    document.getElementById('statTrips').textContent = s.total_trips;
+                    document.getElementById('statPending').textContent = s.pending_bookings;
+                    document.getElementById('statFeedback').textContent = s.new_feedback;
+                    document.getElementById('statTourists').textContent = s.total_tourists;
+                    document.getElementById('statGuides').textContent = s.total_guides;
+                }
+            })
+            .catch(() => {});
+    }
+
+    function loadUsers() {
+        const role = document.getElementById('userRoleFilter').value;
+        fetch(`php/admin.php?action=users&role=${role}`)
+            .then(r => r.json())
+            .then(data => {
+                const tbody = document.getElementById('usersTableBody');
+                if (!data.success || !data.users.length) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-light);">No users found</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = data.users.map(u => `
+                    <tr>
+                        <td>${u.id}</td>
+                        <td><strong style="color:var(--dark);">${u.full_name}</strong></td>
+                        <td>${u.email}</td>
+                        <td>${u.phone || '-'}</td>
+                        <td><span class="status-badge ${u.role === 'tourist' ? 'open' : 'booked'}">${u.role}</span></td>
+                        <td>${u.city || '-'}</td>
+                        <td><span class="status-badge ${u.status}">${u.status}</span></td>
+                        <td>${formatDate(u.created_at)}</td>
+                        <td>
+                            <div class="action-btns">
+                                ${u.status === 'active'
+                                    ? `<button class="action-btn" title="Deactivate" onclick="toggleUserStatus(${u.id}, 'inactive')"><i class="fas fa-ban"></i></button>`
+                                    : `<button class="action-btn" title="Activate" onclick="toggleUserStatus(${u.id}, 'active')"><i class="fas fa-check"></i></button>`
+                                }
+                                <button class="action-btn danger" title="Delete" onclick="confirmDeleteUser(${u.id}, '${u.full_name}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            });
+    }
+
+    function toggleUserStatus(userId, status) {
+        fetch('php/admin.php?action=update_user_status', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, status: status })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) loadUsers();
+            else alert(res.message);
+        });
+    }
+
+    function confirmDeleteUser(userId, name) {
+        document.getElementById('deleteUserMessage').textContent = `Are you sure you want to delete user "${name}"? This will also delete all their trips, bookings, and reviews.`;
+        document.getElementById('deleteUserModal').classList.add('show');
+        document.getElementById('confirmDeleteUserBtn').onclick = function() {
+            fetch('php/admin.php?action=delete_user', {
+            credentials: 'include',
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId })
+            })
+            .then(r => r.json())
+            .then(res => {
+                closeModal('deleteUserModal');
+                if (res.success) { loadUsers(); loadDashboard(); }
+                else alert(res.message);
+            });
+        };
+    }
+
+    function loadAdminTrips() {
+        // Load Trips
+        Promise.all([
+            fetch('php/admin.php?action=all_trips', { credentials: 'include' }).then(r => r.json()),
+            fetch('php/packages.php?action=all_packages', { credentials: 'include' }).then(r => r.json()).catch(() => ({ success: false })),
+            fetch('php/admin.php?action=all_bookings', { credentials: 'include' }).then(r => r.json()).catch(() => ({ success: false }))
+        ]).then(([tripsData, pkgsData, booksData]) => {
+            const tbody = document.getElementById('tripsTableBody');
+            let rows = [];
+
+            // Regular Trips
+            if (tripsData.success && tripsData.trips) {
+                tripsData.trips.forEach(t => {
+                    rows.push(`
+                    <tr>
+                        <td>${t.id}</td>
+                        <td><span class="status-badge open" style="background:#e8f5e9;color:#2e7d32;">Trip</span></td>
+                        <td><strong>${t.title}</strong></td>
+                        <td>${t.guide_name}</td>
+                        <td>${t.location_city || '-'}</td>
+                        <td>${formatDate(t.start_date)}</td>
+                        <td>${Number(t.price).toFixed(0)} SAR</td>
+                        <td>${t.booked_count || 0} / ${t.max_tourists}</td>
+                        <td><span class="status-badge ${t.status === 'open' ? 'open' : 'completed'}">${t.status}</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn" title="View" onclick="window.open('trip-details.html?id=${t.id}')"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn danger" title="Delete" onclick="deleteAdminTrip(${t.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>`);
+                });
+            }
+
+            // Packages
+            if (pkgsData.success && pkgsData.packages) {
+                pkgsData.packages.forEach(p => {
+                    const cities = (p.cities || []).map(c => c.city_name).join(', ') || '-';
+                    rows.push(`
+                    <tr>
+                        <td>${p.id}</td>
+                        <td><span class="status-badge" style="background:#fff3e0;color:#e65100;">Package</span></td>
+                        <td><strong>${p.title}</strong></td>
+                        <td>${p.guide_name || '-'}</td>
+                        <td>${cities}</td>
+                        <td>${p.start_date ? formatDate(p.start_date) : '-'}</td>
+                        <td>${Number(p.base_price).toFixed(0)} SAR</td>
+                        <td>- / ${p.max_tourists}</td>
+                        <td><span class="status-badge ${p.status === 'active' ? 'open' : 'completed'}">${p.status}</span></td>
+                        <td><div class="action-btns"><button class="action-btn" title="View" onclick="viewAdminPackage(${p.id})"><i class="fas fa-eye"></i></button><button class="action-btn danger" title="Delete" onclick="deleteAdminPackage(${p.id})"><i class="fas fa-trash"></i></button></div></td>
+                    </tr>`);
+                });
+            }
+
+            // Self-Planned Bookings
+            if (booksData.success && booksData.bookings) {
+                booksData.bookings.filter(b => b.booking_type === 'self_planned').forEach(b => {
+                    rows.push(`
+                    <tr>
+                        <td>${b.id}</td>
+                        <td><span class="status-badge" style="background:#e3f2fd;color:#1565c0;">${currentLang==='ar'?'ذاتي':'Self-Planned'}</span></td>
+                        <td><strong>${currentLang==='ar'?'رحلة ذاتية':'Self-Planned Trip'}</strong></td>
+                        <td>${b.guide_name || '<span style="color:var(--text-light);">Unassigned</span>'}</td>
+                        <td>${b.location_city || '-'}</td>
+                        <td>${formatDate(b.display_start_date || b.start_date)}</td>
+                        <td>${Number(b.total_price||0).toFixed(0)} SAR</td>
+                        <td>${b.num_people} person(s)</td>
+                        <td><span class="status-badge ${b.status}">${b.status}</span></td>
+                        <td><div class="action-btns"><button class="action-btn" title="View" onclick="viewAdminBooking(${b.id})"><i class="fas fa-eye"></i></button><button class="action-btn danger" title="Delete" onclick="deleteAdminBooking(${b.id})"><i class="fas fa-trash"></i></button></div></td>
+                    </tr>`);
+                });
+            }
+
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-light);">No trips found</td></tr>';
+            } else {
+                tbody.innerHTML = rows.join('');
+            }
+        }).catch(() => {
+            document.getElementById('tripsTableBody').innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--danger);">Error loading trips</td></tr>';
+        });
+    }
+
+    function deleteAdminTrip(id) {
+        if (!confirm('Delete this trip?')) return;
+        fetch('php/trips.php?action=delete', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) loadAdminTrips();
+            else alert(res.message);
+        });
+    }
+
+    function viewAdminPackage(id) {
+        window.open('package-details.html?id=' + id);
+    }
+
+    function viewAdminBooking(id) {
+        window.open('booking-details.html?id=' + id);
+    }
+
+    function deleteAdminPackage(id) {
+        if (!confirm('Delete this package?')) return;
+        fetch('php/packages.php?action=delete_package', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) loadAdminTrips();
+            else alert(res.message || 'Failed to delete package');
+        });
+    }
+
+    function loadAdminBookings() {
+        fetch('php/admin.php?action=all_bookings', { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                const tbody = document.getElementById('bookingsTableBody');
+                if (!data.success || !data.bookings.length) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-light);">No bookings found</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = data.bookings.map(b => `
+                    <tr>
+                        <td>${b.id}</td>
+                        <td>${b.trip_title || '-'}</td>
+                        <td>${b.tourist_name}</td>
+                        <td>
+                            ${b.guide_name
+                                ? `<span style="font-size:0.85rem;color:var(--dark);font-weight:600;">
+                                       <i class="fas fa-user-tie" style="color:var(--primary);margin-left:4px;"></i> ${b.guide_name}
+                                   </span>`
+                                : `<button onclick="openAssignGuide(${b.id}, '${b.tourist_name}')" style="padding:4px 10px;border-radius:20px;border:none;background:var(--gold);color:var(--dark);cursor:pointer;font-size:0.75rem;font-weight:600;">
+                                       <i class="fas fa-user-tie"></i> ${currentLang === 'ar' ? 'تعيين مرشد' : 'Assign Guide'}
+                                   </button>`
+                            }
+                        </td>
+                        <td>${b.num_people}</td>
+                        <td>${(() => { const loc = b.location_city || b.cities || ''; return loc ? `<span style="font-size:0.85rem;"><i class="fas fa-map-marker-alt" style="color:var(--primary);margin-left:4px;"></i> ${loc}</span>` : '<span style="color:var(--text-light);">-</span>'; })()}</td>
+                        <td><span class="status-badge ${b.status}">${translateBookingStatus(b.status)}</span></td>
+                        <td>${formatDate(b.display_start_date || b.start_date || b.created_at)}</td>
+                        <td>
+                            ${b.status === 'pending' ? `
+                                <div class="action-btns" style="display:flex;gap:6px;">
+                                    <button onclick="adminUpdateBooking(${b.id},'accepted')" style="padding:4px 10px;border-radius:20px;border:none;background:var(--primary);color:white;cursor:pointer;font-size:0.75rem;font-weight:600;">
+                                        <i class="fas fa-check"></i> ${currentLang === 'ar' ? 'قبول' : 'Accept'}
+                                    </button>
+                                    <button onclick="adminUpdateBooking(${b.id},'rejected')" style="padding:4px 10px;border-radius:20px;border:none;background:var(--danger);color:white;cursor:pointer;font-size:0.75rem;font-weight:600;">
+                                        <i class="fas fa-times"></i> ${currentLang === 'ar' ? 'رفض' : 'Reject'}
+                                    </button>
+                                </div>
+                            ` : `<span style="color:var(--text-light);font-size:0.8rem;">${translateBookingStatus(b.status)}</span>`}
+                        </td>
+                        <td>
+                            <button onclick="adminDeleteBooking(${b.id})" style="padding:4px 10px;border-radius:20px;border:none;background:var(--danger);color:white;cursor:pointer;font-size:0.75rem;" title="${currentLang === 'ar' ? 'حذف' : 'Delete'}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            })
+            .catch(() => {
+                document.getElementById('bookingsTableBody').innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--danger);">Error loading bookings. Please refresh.</td></tr>';
+            });
+    }
+
+    function translateBookingStatus(status) {
+        const isAr = currentLang === 'ar';
+        const map = { accepted: isAr ? 'مقبول' : 'Accepted', pending: isAr ? 'معلق' : 'Pending', rejected: isAr ? 'مرفوض' : 'Rejected', cancelled: isAr ? 'ملغي' : 'Cancelled' };
+        return map[status] || status;
+    }
+
+    function adminUpdateBooking(bookingId, status) {
+        if (!confirm((currentLang === 'ar' ? 'هل تريد ' + (status === 'accepted' ? 'قبول' : 'رفض') + ' هذا الحجز؟' : 'Are you sure you want to ' + status + ' this booking?'))) return;
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'php/bookings.php?action=update_status', true);
+        xhr.withCredentials = true;
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState !== 4) return;
+            let data;
+            try { data = JSON.parse(xhr.responseText); } catch(e) { data = {success: false, message: 'Error'}; }
+            if (data.success) {
+                showToast(data.message || (currentLang === 'ar' ? 'تم تحديث الحجز' : 'Booking updated'));
+                loadAdminBookings();
+            } else {
+                alert(data.message || 'Error');
+            }
+        };
+        xhr.send(JSON.stringify({ booking_id: bookingId, status, lang: currentLang }));
+    }
+
+    function loadAdminReviews() {
+        fetch('php/admin.php?action=all_reviews', { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                const tbody = document.getElementById('reviewsTableBody');
+                if (!data.success || !data.reviews.length) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-light);">No reviews</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = data.reviews.map(r => `
+                    <tr>
+                        <td>${r.id}</td>
+                        <td>${r.trip_title}</td>
+                        <td>${r.reviewer_name}</td>
+                        <td>${renderStars(r.rating)}</td>
+                        <td style="max-width:300px;">${r.comment || '-'}</td>
+                        <td>${formatDate(r.created_at)}</td>
+                        <td>
+                            <button class="action-btn danger" title="Delete" onclick="deleteReview(${r.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            });
+    }
+
+    function deleteReview(id) {
+        if (!confirm('Delete this review?')) return;
+        fetch('php/reviews.php?action=delete', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        })
+        .then(r => r.json())
+        .then(res => { if (res.success) loadAdminReviews(); });
+    }
+
+    function loadAdminFeedback() {
+        fetch('php/admin.php?action=feedback', { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                const tbody = document.getElementById('feedbackTableBody');
+                if (!data.success || !data.feedback.length) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-light);">No feedback</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = data.feedback.map(f => `
+                    <tr>
+                        <td>${f.name}</td>
+                        <td>${f.email}</td>
+                        <td>${f.subject || '-'}</td>
+                        <td style="max-width:300px;">${f.message}</td>
+                        <td>${formatDate(f.created_at)}</td>
+                    </tr>
+                `).join('');
+            });
+    }
+
+    function loadAdminFaqs() {
+        fetch('php/admin.php?action=faqs', { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                const container = document.getElementById('faqsList');
+                if (!data.success || !data.faqs.length) {
+                    container.innerHTML = '<div class="card" style="padding:40px; text-align:center;"><p style="color:var(--text-light);">No FAQs yet. Add your first FAQ.</p></div>';
+                    return;
+                }
+                container.innerHTML = data.faqs.map(faq => `
+                    <div class="card" style="margin-bottom:12px;">
+                        <div class="card-body" style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
+                            <div style="flex:1;">
+                                <strong style="color:var(--dark); display:block; margin-bottom:6px;">${faq.question}</strong>
+                                <p style="color:var(--text-light); font-size:0.9rem;">${faq.answer}</p>
+                            </div>
+                            <div class="action-btns" style="flex-shrink:0;">
+                                <button class="action-btn" title="Edit" onclick='editFaq(${JSON.stringify(faq).replace(/'/g, "&#39;")})'>
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn danger" title="Delete" onclick="deleteFaq(${faq.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            });
+    }
+
+    function openFaqModal(faq = null) {
+        document.getElementById('faqId').value = faq ? faq.id : '';
+        document.getElementById('faqQuestion').value = faq ? faq.question : '';
+        document.getElementById('faqAnswer').value = faq ? faq.answer : '';
+        document.getElementById('faqModalTitle').textContent = faq ? t('ad_edit_faq') : t('ad_add_faq');
+        document.getElementById('faqModal').classList.add('show');
+    }
+
+    function editFaq(faq) {
+        openFaqModal(faq);
+    }
+
+    function saveFaq() {
+        const data = {
+            id: document.getElementById('faqId').value ? parseInt(document.getElementById('faqId').value) : 0,
+            question: document.getElementById('faqQuestion').value.trim(),
+            answer: document.getElementById('faqAnswer').value.trim()
+        };
+        if (!data.question || !data.answer) { alert('Please fill in both fields'); return; }
+
+        fetch('php/admin.php?action=save_faq', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(res => {
+            closeModal('faqModal');
+            if (res.success) loadAdminFaqs();
+            else alert(res.message);
+        });
+    }
+
+    function deleteFaq(id) {
+        if (!confirm('Delete this FAQ?')) return;
+        fetch('php/admin.php?action=delete_faq', {
+            credentials: 'include',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        })
+        .then(r => r.json())
+        .then(res => { if (res.success) loadAdminFaqs(); });
+    }
+</script>
+    <!-- Assign Guide Modal -->
+    <div id="assignGuideModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+        <div style="background:white;border-radius:16px;padding:32px;width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <h3 style="margin-bottom:8px;" id="assignModalTitle">Assign Guide</h3>
+            <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:20px;" id="assignModalSubtitle"></p>
+            <div class="form-group">
+                <label style="font-weight:600;margin-bottom:8px;display:block;" id="assignGuideLabel">Select Guide</label>
+                <select class="form-control" id="assignGuideSelect" style="width:100%;">
+                    <option value="">Loading guides...</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:20px;justify-content:flex-end;">
+                <button onclick="closeAssignGuide()" style="padding:10px 20px;border-radius:20px;border:1px solid var(--gray-200);background:none;cursor:pointer;">
+                    <span id="assignCancelBtn">Cancel</span>
+                </button>
+                <button onclick="confirmAssignGuide()" style="padding:10px 20px;border-radius:20px;border:none;background:var(--primary);color:white;cursor:pointer;font-weight:600;">
+                    <i class="fas fa-user-tie"></i> <span id="assignConfirmBtn">Assign</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

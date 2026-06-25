@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Details - STMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar scrolled" id="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-logo" style="color:var(--primary);">
+            <div class="logo-icon"><i class="fas fa-kaaba"></i></div>
+            STMS
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="trips.html" style="color:var(--text);" data-i18n="nav_browse">Browse Trips</a>
+            <a href="index.html#about" style="color:var(--text);" data-i18n="nav_about">About</a>
+        </div>
+        <div class="nav-right">
+            <button class="lang-switch" onclick="toggleLang()">العربية</button>
+            <a href="javascript:history.back()" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<div class="trip-hero" id="pkgHero" style="margin-top:70px;">
+    <div class="trip-hero-overlay">
+        <div class="trip-hero-text">
+            <div style="margin-bottom:10px;">
+                <span style="background:var(--gold);color:white;padding:4px 14px;border-radius:20px;font-size:0.85rem;font-weight:600;">
+                    <i class="fas fa-suitcase-rolling"></i> Package
+                </span>
+            </div>
+            <h1 id="pkgTitle">Loading...</h1>
+            <div class="trip-hero-meta" id="pkgHeroMeta"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="container">
+    <div class="trip-detail-grid">
+        <!-- Left Column -->
+        <div>
+            <!-- Description -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fas fa-info-circle" style="color:var(--primary);margin-right:8px;"></i> About This Package</h3>
+                </div>
+                <div class="card-body">
+                    <p id="pkgDescription" style="line-height:1.8;color:var(--text);"></p>
+                </div>
+            </div>
+
+            <!-- Cities -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fas fa-map-marked-alt" style="color:var(--gold-dark);margin-right:8px;"></i> Cities Included</h3>
+                </div>
+                <div class="card-body" id="pkgCitiesContainer">
+                    <p style="color:var(--text-light);">Loading cities...</p>
+                </div>
+            </div>
+
+            <!-- Itinerary -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fas fa-route" style="color:var(--gold-dark);margin-right:8px;"></i> Day-by-Day Itinerary</h3>
+                </div>
+                <div class="card-body" id="pkgItineraryContainer">
+                    <p style="color:var(--text-light);">Itinerary details coming soon.</p>
+                </div>
+            </div>
+
+            <!-- Guide -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fas fa-user-tie" style="color:var(--info);margin-right:8px;"></i> Your Guide</h3>
+                </div>
+                <div class="card-body">
+                    <div style="display:flex;align-items:center;gap:16px;">
+                        <div class="profile-avatar" style="width:64px;height:64px;font-size:1.4rem;border-radius:50%;background:rgba(0,108,53,0.1);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;" id="pkgGuideAvatar">G</div>
+                        <div>
+                            <h4 id="pkgGuideName" style="color:var(--dark);margin-bottom:2px;"></h4>
+                            <p id="pkgGuideInfo" style="color:var(--text-light);font-size:0.9rem;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Info Widget -->
+        <div>
+            <div class="booking-widget">
+                <div class="booking-price" id="pkgPrice">--</div>
+                <p style="color:var(--text-light);font-size:0.85rem;margin-bottom:20px;">per person (base price)</p>
+
+                <div style="display:flex;gap:12px;margin-bottom:20px;">
+                    <div style="flex:1;background:var(--gray-50);border-radius:10px;padding:12px;text-align:center;">
+                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;">Duration</div>
+                        <strong id="pkgDuration" style="color:var(--dark);">--</strong>
+                    </div>
+                    <div style="flex:1;background:var(--gray-50);border-radius:10px;padding:12px;text-align:center;">
+                        <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;">Max Tourists</div>
+                        <strong id="pkgMaxTourists" style="color:var(--primary);">--</strong>
+                    </div>
+                </div>
+
+                <div style="background:var(--gray-50);border-radius:10px;padding:16px;margin-bottom:16px;" id="pkgInfoBox">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <i class="fas fa-bus" style="color:var(--primary);"></i>
+                        <span style="font-size:0.9rem;">Transportation included</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <i class="fas fa-lock" style="color:var(--gold-dark);"></i>
+                        <span style="font-size:0.9rem;">Fixed duration — cannot be extended</span>
+                    </div>
+                </div>
+
+                <div id="pkgStartDateBox" style="background:var(--gray-50);border-radius:10px;padding:12px;margin-bottom:16px;text-align:center;">
+                    <div style="font-size:0.75rem;color:var(--text-light);text-transform:uppercase;margin-bottom:4px;">Start Date</div>
+                    <strong id="pkgStartDate" style="color:var(--dark);font-size:1.1rem;">Not set</strong>
+                </div>
+
+                <a href="book.html?type=package" id="pkgBookLink" class="btn btn-primary btn-block btn-lg">
+                    <i class="fas fa-shopping-cart"></i> Book This Package
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom" style="border:none;padding:0;">
+            <span>&copy; 2026 STMS - Saudi Trip Management System. All rights reserved.</span>
+        </div>
+    </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const pkgId = urlParams.get('id');
+
+    if (!pkgId) {
+        document.getElementById('pkgTitle').textContent = 'Package not found';
+    } else {
+        loadPackageDetails();
+    }
+
+    function loadPackageDetails() {
+        fetch(`php/packages.php?action=get_package&id=${pkgId}`, { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.package) {
+                    renderPackage(data.package);
+                } else {
+                    document.getElementById('pkgTitle').textContent = 'Package not found';
+                }
+            })
+            .catch(() => {
+                document.getElementById('pkgTitle').textContent = 'Error loading package';
+            });
+    }
+
+    function renderPackage(pkg) {
+        document.title = pkg.title + ' - STMS';
+
+        const heroEl = document.getElementById('pkgHero');
+        if (pkg.cover_image) {
+            heroEl.style.backgroundImage = `url('${pkg.cover_image}')`;
+            heroEl.style.backgroundSize = 'cover';
+            heroEl.style.backgroundPosition = 'center';
+        }
+
+        document.getElementById('pkgTitle').textContent = pkg.title;
+
+        const cities = (pkg.cities || []).map(c => c.city_name).join(', ') || '-';
+        document.getElementById('pkgHeroMeta').innerHTML = `
+            <span><i class="fas fa-map-marker-alt"></i> ${cities}</span>
+            <span><i class="fas fa-clock"></i> ${pkg.duration_days} Days</span>
+            <span><i class="fas fa-users"></i> Max ${pkg.max_tourists} tourists</span>
+        `;
+
+        document.getElementById('pkgDescription').textContent = pkg.description || '';
+        document.getElementById('pkgPrice').innerHTML = `${Number(pkg.base_price).toFixed(0)} <span>SAR</span>`;
+        document.getElementById('pkgDuration').textContent = pkg.duration_days + ' Days';
+        document.getElementById('pkgMaxTourists').textContent = pkg.max_tourists;
+
+        if (pkg.start_date) {
+            document.getElementById('pkgStartDate').textContent = formatDate(pkg.start_date);
+        } else {
+            document.getElementById('pkgStartDate').textContent = 'Not set by guide';
+        }
+
+        document.getElementById('pkgBookLink').href = `book.html?type=package&pkg=${pkg.id}`;
+
+        // Cities
+        if (pkg.cities && pkg.cities.length) {
+            document.getElementById('pkgCitiesContainer').innerHTML = pkg.cities.map(c => `
+                <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100);">
+                    <div style="background:var(--primary);color:white;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">
+                        <i class="fas fa-map-pin" style="font-size:0.8rem;"></i>
+                    </div>
+                    <div>
+                        <strong style="color:var(--dark);">${c.city_name}</strong>
+                        <span style="color:var(--text-light);font-size:0.85rem;margin-right:8px;"> — ${c.days_in_city} day${c.days_in_city > 1 ? 's' : ''}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Itinerary
+        if (pkg.itinerary && pkg.itinerary.length) {
+            document.getElementById('pkgItineraryContainer').innerHTML = pkg.itinerary.map(item => `
+                <div class="itinerary-item">
+                    <div class="itinerary-day">
+                        <span>Day</span>
+                        <strong>${item.day_number}</strong>
+                    </div>
+                    <div class="itinerary-content">
+                        <h4>${item.title}${item.city_name ? ' <small style="color:var(--text-light);font-weight:400;">— ' + item.city_name + '</small>' : ''}</h4>
+                        <p>${item.description || ''}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Guide
+        if (pkg.guide_name) {
+            document.getElementById('pkgGuideName').textContent = pkg.guide_name;
+            document.getElementById('pkgGuideAvatar').textContent = pkg.guide_name.charAt(0);
+            document.getElementById('pkgGuideInfo').textContent = pkg.guide_email || '';
+        }
+    }
+</script>
+</body>
+</html>

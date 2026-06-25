@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STMS - Saudi Trip Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- ===== Navigation Bar ===== -->
+<nav class="navbar" id="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-logo">
+            <div class="logo-icon"><i class="fas fa-kaaba"></i></div>
+            STMS
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="#about" data-i18n="nav_about">About</a>
+            <a href="#contact" data-i18n="nav_contact">Contact</a>
+            <a href="#faq" data-i18n="nav_faq">FAQ</a>
+            <a href="trips.html" data-i18n="nav_browse">Browse Trips</a>
+            <a href="book.html" data-i18n="book_trip_nav">Book a Trip</a>
+        </div>
+        <div class="nav-right">
+            <button class="lang-switch" onclick="toggleLang()">العربية</button>
+            <a href="login.html" class="btn btn-primary btn-sm">
+                <i class="fas fa-sign-in-alt"></i> <span data-i18n="nav_login">Login</span>
+            </a>
+            <button class="mobile-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== Hero Section ===== -->
+<section class="hero">
+    <div class="hero-bg">
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?w=1600')"></div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?w=1600')"></div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=1600')"></div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1600')"></div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="hero-badge">
+            <i class="fas fa-star"></i> <span data-i18n="hero_badge">Discover the Beauty of Saudi Arabia</span>
+        </div>
+        <h1 class="hero-title">
+            <span data-i18n="hero_title_1">Saudi</span> <span style="color:var(--gold)" data-i18n="hero_title_2">Trip</span><br><span data-i18n="hero_title_3">Management System</span>
+        </h1>
+        <p class="hero-subtitle">
+            <span data-i18n="hero_subtitle">Explore breathtaking destinations across Saudi Arabia. From ancient heritage sites to modern marvels, your perfect adventure awaits.</span>
+        </p>
+        <div class="hero-card">
+            <h2><span data-i18n="hero_welcome">Welcome to</span> <span style="color:var(--gold)">STMS</span></h2>
+            <p data-i18n="hero_gateway">Your gateway to unforgettable Saudi experiences</p>
+            <div class="hero-buttons">
+                <a href="book.html" class="btn btn-gold btn-lg">
+                    <i class="fas fa-suitcase-rolling"></i> <span data-i18n="book_trip_nav">Book a Trip</span>
+                </a>
+                <a href="trips.html" class="btn btn-outline btn-lg">
+                    <i class="fas fa-compass"></i> <span data-i18n="hero_browse">Browse Trips</span>
+                </a>
+            </div>
+        </div>
+        <div class="hero-features">
+            <div class="hero-feature">
+                <i class="fas fa-mountain"></i> <span data-i18n="hero_desert">Desert & Mountains</span>
+            </div>
+            <div class="hero-feature">
+                <i class="fas fa-water"></i> <span data-i18n="hero_sea">Red Sea Coast</span>
+            </div>
+            <div class="hero-feature">
+                <i class="fas fa-mosque"></i> <span data-i18n="hero_heritage">Heritage Sites</span>
+            </div>
+            <div class="hero-feature">
+                <i class="fas fa-city"></i> <span data-i18n="hero_cities">Modern Cities</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== About Section ===== -->
+<section id="about" style="padding: 80px 0;">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2 style="font-size:2.2rem; color:var(--dark); margin-bottom:10px;" data-i18n="about_title">About STMS</h2>
+            <p style="color:var(--text-light); max-width:600px; margin:0 auto;">
+                <span data-i18n="about_desc">Saudi Trip Management System connects tourists with certified local guides for authentic Saudi Arabian travel experiences.</span>
+            </p>
+        </div>
+        <div class="grid-3" style="margin-top:40px;">
+            <div class="card" style="text-align:center; padding:40px 30px;">
+                <div style="width:70px;height:70px;border-radius:50%;background:rgba(0,108,53,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.5rem;color:var(--primary);">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 style="margin-bottom:10px; color:var(--dark);" data-i18n="about_discover">Discover Trips</h3>
+                <p style="color:var(--text-light); font-size:0.9rem;" data-i18n="about_discover_desc">Browse hundreds of curated trips across all regions of Saudi Arabia, from desert safaris to coastal getaways.</p>
+            </div>
+            <div class="card" style="text-align:center; padding:40px 30px;">
+                <div style="width:70px;height:70px;border-radius:50%;background:rgba(200,169,81,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.5rem;color:var(--gold-dark);">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3 style="margin-bottom:10px; color:var(--dark);" data-i18n="about_guides">Expert Guides</h3>
+                <p style="color:var(--text-light); font-size:0.9rem;" data-i18n="about_guides_desc">Connect with certified local guides who bring deep knowledge and passion for Saudi culture and heritage.</p>
+            </div>
+            <div class="card" style="text-align:center; padding:40px 30px;">
+                <div style="width:70px;height:70px;border-radius:50%;background:rgba(52,152,219,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.5rem;color:var(--info);">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 style="margin-bottom:10px; color:var(--dark);" data-i18n="about_safe">Safe & Secure</h3>
+                <p style="color:var(--text-light); font-size:0.9rem;" data-i18n="about_safe_desc">Book with confidence. All guides are verified and trips are monitored to ensure your safety and satisfaction.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Contact Section ===== -->
+<section id="contact" style="padding: 80px 0; background: var(--white);">
+    <div class="container">
+        <div class="grid-2">
+            <div>
+                <h2 style="font-size:2rem; color:var(--dark); margin-bottom:10px;" data-i18n="contact_title">Get in Touch</h2>
+                <p style="color:var(--text-light); margin-bottom:30px;" data-i18n="contact_desc">Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+                <div style="display:flex; align-items:center; gap:14px; margin-bottom:20px;">
+                    <div style="width:46px;height:46px;border-radius:12px;background:rgba(0,108,53,0.1);display:flex;align-items:center;justify-content:center;color:var(--primary);">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <strong style="display:block; color:var(--dark);" data-i18n="contact_email">Email</strong>
+                        <span style="color:var(--text-light); font-size:0.9rem;">info@stms.sa</span>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:14px; margin-bottom:20px;">
+                    <div style="width:46px;height:46px;border-radius:12px;background:rgba(0,108,53,0.1);display:flex;align-items:center;justify-content:center;color:var(--primary);">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div>
+                        <strong style="display:block; color:var(--dark);" data-i18n="contact_phone">Phone</strong>
+                        <span style="color:var(--text-light); font-size:0.9rem;">+966 11 000 0000</span>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:14px;">
+                    <div style="width:46px;height:46px;border-radius:12px;background:rgba(0,108,53,0.1);display:flex;align-items:center;justify-content:center;color:var(--primary);">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <strong style="display:block; color:var(--dark);" data-i18n="contact_address">Address</strong>
+                        <span style="color:var(--text-light); font-size:0.9rem;" data-i18n="contact_address_val">Riyadh, Saudi Arabia</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label data-i18n="contact_name">Your Name</label>
+                            <input type="text" class="form-control" name="name" required placeholder="Enter your name" data-i18n-ph="contact_name_ph">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="contact_email_label">Email Address</label>
+                            <input type="email" class="form-control" name="email" required placeholder="Enter your email" data-i18n-ph="contact_email_ph">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="contact_subject">Subject</label>
+                            <input type="text" class="form-control" name="subject" placeholder="Subject (optional)" data-i18n-ph="contact_subject_ph">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="contact_message">Message</label>
+                            <textarea class="form-control" name="message" rows="4" required placeholder="Write your message..." data-i18n-ph="contact_message_ph"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-paper-plane"></i> <span data-i18n="contact_send">Send Message</span>
+                        </button>
+                    </form>
+                    <div class="success-message mt-2" id="contactSuccess">
+                        <i class="fas fa-check-circle"></i>
+                        <h4 data-i18n="contact_success_title">Message Sent!</h4>
+                        <p data-i18n="contact_success_desc">Thank you for reaching out. We'll get back to you soon.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FAQ Section ===== -->
+<section id="faq" style="padding: 80px 0;">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2 style="font-size:2rem; color:var(--dark); margin-bottom:10px;" data-i18n="faq_title">Frequently Asked Questions</h2>
+            <p style="color:var(--text-light);" data-i18n="faq_desc">Find answers to common questions about STMS</p>
+        </div>
+        <div style="max-width:750px; margin:0 auto;" id="faqContainer">
+            <!-- FAQs loaded dynamically -->
+        </div>
+    </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h3><i class="fas fa-kaaba" style="color:var(--gold);margin-right:8px;"></i> STMS</h3>
+                <p data-i18n="footer_desc">Saudi Trip Management System - Your gateway to unforgettable experiences across the Kingdom of Saudi Arabia.</p>
+            </div>
+            <div>
+                <h4 data-i18n="footer_quick">Quick Links</h4>
+                <ul>
+                    <li><a href="#about" data-i18n="footer_about">About Us</a></li>
+                    <li><a href="trips.html" data-i18n="nav_browse">Browse Trips</a></li>
+                    <li><a href="login.html" data-i18n="footer_login">Login</a></li>
+                    <li><a href="register.html" data-i18n="footer_register">Register</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 data-i18n="footer_dest">Destinations</h4>
+                <ul>
+                    <li><a href="#">Riyadh</a></li>
+                    <li><a href="#">Jeddah</a></li>
+                    <li><a href="#">AlUla</a></li>
+                    <li><a href="#">Abha</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 data-i18n="footer_support">Support</h4>
+                <ul>
+                    <li><a href="#faq" data-i18n="footer_faq">FAQ</a></li>
+                    <li><a href="#contact" data-i18n="footer_contact_us">Contact Us</a></li>
+                    <li><a href="terms.html" data-i18n="footer_terms">Terms of Service</a></li>
+                    <li><a href="privacy.html" data-i18n="footer_privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span data-i18n="footer_copy">&copy; 2026 STMS - Saudi Trip Management System. All rights reserved.</span>
+        </div>
+    </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+    // Load FAQs
+    let faqDataCache = [];
+
+    function renderFaqs(faqs) {
+        const container = document.getElementById('faqContainer');
+        container.innerHTML = faqs.map(faq => {
+            const tr = translateFaqText(faq.question, faq.answer);
+            return `
+                <div class="card" style="margin-bottom:12px;">
+                    <div style="padding:20px 24px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="this.nextElementSibling.classList.toggle('active'); this.querySelector('i').classList.toggle('fa-chevron-up')">
+                        <strong style="color:var(--dark); font-size:0.95rem;">${tr.q}</strong>
+                        <i class="fas fa-chevron-down" style="color:var(--text-light); font-size:0.8rem; transition:var(--transition);"></i>
+                    </div>
+                    <div style="padding:0 24px; max-height:0; overflow:hidden; transition: max-height 0.3s ease, padding 0.3s ease;" class="faq-answer">
+                        <p style="color:var(--text-light); font-size:0.9rem; padding-bottom:20px;">${tr.a}</p>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    // Re-render FAQs when language changes
+    const origApply = applyLang;
+    applyLang = function() {
+        origApply();
+        if (faqDataCache.length) renderFaqs(faqDataCache);
+    };
+
+    fetch('php/admin.php?action=faqs')
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.faqs) {
+                faqDataCache = data.faqs;
+                renderFaqs(faqDataCache);
+            }
+        })
+        .catch(() => {
+            faqDataCache = [
+                { question: 'How do I book a trip?', answer: 'Browse available trips, select one, choose your date and number of people, and click Book Trip.' },
+                { question: 'Can I cancel a booking?', answer: 'Yes, you can cancel up to 48 hours before the trip start date for a full refund.' },
+                { question: 'How do I become a tour guide?', answer: 'Register as a Guide, complete your profile, and start creating trips. Our admin team will review your account within 24 hours.' },
+                { question: 'Is it safe to travel in Saudi Arabia?', answer: 'Saudi Arabia is one of the safest countries in the world for tourists. Our guides are certified professionals.' }
+            ];
+            renderFaqs(faqDataCache);
+        });
+
+    // Contact Form
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+
+        fetch('php/users.php?action=contact', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success) {
+                this.style.display = 'none';
+                document.getElementById('contactSuccess').classList.add('show');
+            } else {
+                alert(res.message);
+            }
+        })
+        .catch(() => {
+            this.style.display = 'none';
+            document.getElementById('contactSuccess').classList.add('show');
+        });
+    });
+</script>
+</body>
+</html>
